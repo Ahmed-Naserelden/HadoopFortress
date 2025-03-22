@@ -19,7 +19,6 @@ RUN mkdir -p /home/hduser/.ssh && \
 
 # Copy Hadoop archive and extract it
 COPY ./shared/hadoop-3.3.6.tar.gz /usr/local/
-COPY ./shared/entrypoint.sh /entrypoint.sh
 
 RUN tar -xvzf /usr/local/hadoop-3.3.6.tar.gz -C /usr/local/ && \
     mv /usr/local/hadoop-3.3.6 /usr/local/hadoop && \
@@ -62,11 +61,16 @@ RUN mkdir -p /app/hadoop/tmp && \
     chown -R hduser:hadoop /usr/local/hadoop/yarn_data/hdfs/datanode && \
     chown -R hduser:hadoop /usr/local/hadoop
 
+RUN  mkdir -p /usr/local/hadoop/logs && \
+    chmod -R 755 /usr/local/hadoop/logs && \
+    chown -R hduser:hadoop /usr/local/hadoop/logs
+
+
 # Switch to Hadoop user
 USER hduser
 
 # Expose ports for Hadoop services
-EXPOSE 8888 9870 4040 8088 9864 8042 18080 18081 22
+EXPOSE 8888 9870 4040 8088 9864 8042 18080 18081 22 8020 8485
 
 # Set entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "-c", "/entrypoint.sh"]

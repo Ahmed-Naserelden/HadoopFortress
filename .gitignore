@@ -1,5 +1,7 @@
 shared/mr_max_temperature/
 shared/data/
 shared/.ssh/
-prompot
+prompt
 shared/hadoop-3.3.6.tar.gz
+shared/zo
+design/apache-zookeeper-3.8.4-bin.tar.gz

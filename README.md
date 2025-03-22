@@ -1,5 +1,5 @@
 # HDFS High Availability Using the Quorum Journal Manager
-
+![HDFS High Availability Architecture](design/arch.png)
 ### create container 
 `terminal`
 ```bash
@@ -157,4 +157,9 @@ $HADOOP_HOME/sbin/start-yarn.sh
 `run a container`
 ```bash
 docker container run -d --name hadoop-cluster100 --hostname hadoop -p 8888:8888 -p 9879:9870 -p 4040:4040 -p 8078:8088 -p 9864:9864 -p 8042:8042 -p 18180:18080 -p 18181:18081 -v ./shared:/shared an2071497/hadoopimg:1.4
+```
+
+```bash
+docker container run -it --name hadoop-cluster100 --hostname hadoop -p 8888:8888 -p 9879:9870 -p 4040:4040 -p 8078:8088 -p 9864:9864 -p 8042:8042 -p 18180:18080 -p 18181:18081 -v ./shared:/shared -v ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh an2071497/hadoopimg:1.6 
+
 ```

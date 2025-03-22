@@ -1,0 +1,109 @@
+version: '3.7'
+
+services:
+  master1:
+    image: an2071497/hadoopimg:1.5
+    container_name: master1
+
+    environment:
+      - isMaster=yes
+
+    hostname: master1
+    restart: always
+
+    networks:
+      - cluster_net
+
+    # entrypoint: ./entrypoint.sh
+    ports:
+      - "8888:8888"
+      - "9879:9870"
+      - "4040:4040"
+      - "8078:8088"
+      - "9864:9864"
+      - "8042:8042"
+      
+      - "18180:18080"
+      - "18181:18081"
+
+    volumes:
+      - ./shared:/shared
+      - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
+      - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
+      # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
+    
+
+  master2:
+    image: an2071497/hadoopimg:1.5
+    container_name: master2
+    environment:
+      - isMaster=yes
+
+    hostname: master2
+    restart: always
+    
+    networks:
+      - cluster_net
+
+    ports:
+      - "8881:8888"
+      - "9880:9870"
+      - "4041:4040"
+      - "8079:8088"
+      - "9865:9864"
+      - "8043:8042"
+
+      - "18182:18080"
+      - "18183:18081"
+
+    volumes:
+      - ./shared:/shared
+      - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
+      - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
+      # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
+
+  master3:
+    image: an2071497/hadoopimg:1.5
+    
+    container_name: master3
+    
+    environment:
+      - isMaster=yes
+    # entrypoint: ./entrypoint.sh
+
+    hostname: master3
+    restart: always
+
+    ports:
+      - "8882:8888"
+      - "9881:9870"
+      - "4042:4040"
+      - "8080:8088"
+      - "9866:9864"
+      - "8044:8042"
+
+      - "18184:18080"
+      - "18185:18081"
+
+    volumes:
+      - ./shared:/shared
+      - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
+      - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
+      # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
+
+    networks:
+      - cluster_net
+      
+  # zookeeper:
+  #   image: zookeeper
+  #   container_name: zookeeper
+  #   hostname: zookeeper
+  #   restart: always
+  #   networks:
+  #     - cluster_net
+
+networks:
+  cluster_net:
+    driver: bridge
+
+
