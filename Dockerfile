@@ -10,12 +10,26 @@ RUN addgroup hadoop && \
     adduser --disabled-password --gecos "" --ingroup hadoop hduser && \
     echo "hduser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
+
+
 # Setup SSH for Hadoop
 RUN mkdir -p /home/hduser/.ssh && \
     ssh-keygen -t rsa -N "" -f /home/hduser/.ssh/id_rsa && \
     cat /home/hduser/.ssh/id_rsa.pub >> /home/hduser/.ssh/authorized_keys && \
     chmod 600 /home/hduser/.ssh/authorized_keys && \
     chown -R hduser:hadoop /home/hduser/.ssh
+
+RUN echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> /home/hduser/.profile &&\
+    echo "HADOOP_HOME=/usr/local/hadoop" >> /home/hduser/.profile &&\
+    echo "HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop" >> /home/hduser/.profile &&\
+    echo "HADOOP_MAPRED_HOME=/usr/local/hadoop" >> /home/hduser/.profile &&\
+    echo "HADOOP_COMMON_HOME=/usr/local/hadoop" >> /home/hduser/.profile &&\
+    echo "HADOOP_HDFS_HOME=/usr/local/hadoop" >> /home/hduser/.profile &&\
+    echo "YARN_HOME=/usr/local/hadoop" >> /home/hduser/.profile &&\
+    echo "HADOOP_COMMON_LIB_NATIVE_DIR=/usr/local/hadoop/lib/native" >> /home/hduser/.profile &&\
+    echo "HADOOP_OPTS="-Djava.library.path=/usr/local/hadoop/lib"" >> /home/hduser/.profile &&\
+    echo "PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin:/usr/local/hadoop/zookeeper/bin" >> /home/hduser/.profile
+
 
 # Copy Hadoop archive and extract it
 COPY ./shared/hadoop-3.3.6.tar.gz /usr/local/
@@ -40,7 +54,8 @@ ENV HADOOP_HDFS_HOME=$HADOOP_HOME
 ENV YARN_HOME=$HADOOP_HOME
 ENV HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 ENV HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib"
-ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HADOOP_HOME/zookeeper/bin
+
 
 # Copy Hadoop configuration files
 COPY ./shared/configuration/hadoop-env.sh $HADOOP_CONF_DIR/hadoop-env.sh
@@ -65,12 +80,30 @@ RUN  mkdir -p /usr/local/hadoop/logs && \
     chmod -R 755 /usr/local/hadoop/logs && \
     chown -R hduser:hadoop /usr/local/hadoop/logs
 
+# RUN mkdir -p /tmp/hadoop/dfs/journalnode/mycluste && \
+#     chmod -R 755 /tmp/hadoop/dfs/journalnode/mycluste && \
+#     chown -R hduser:hadoop /tmp/hadoop/dfs/journalnode/mycluste
+
+# COPY ./shared/apache-zookeeper-3.8.4-bin.tar.gz /usr/local/hadoop/
+# RUN tar -xvzf /usr/local/hadoop/apache-zookeeper-3.8.4-bin.tar.gz -C /usr/local/hadoop/ && \
+#     mv /usr/local/hadoop/apache-zookeeper-3.8.4-bin /usr/local/hadoop/zookeeper && \
+#     chown -R hduser:hadoop /usr/local/hadoop/zookeeper && \
+#     chmod -R 755 /usr/local/hadoop/zookeeper
+
+# RUN mkdir -p /var/lib/zookeeper && \
+#     chmod -R 755 /var/lib/zookeeper && \
+#     chown -R hduser:hadoop /var/lib/zookeeper
+
+# COPY ./shared/zookeeper/zoo.cfg /usr/local/hadoop/zookeeper/conf/zoo.cfg
+
+
+
 
 # Switch to Hadoop user
 USER hduser
 
 # Expose ports for Hadoop services
-EXPOSE 8888 9870 4040 8088 9864 8042 18080 18081 22 8020 8485
+EXPOSE 8888 9870 4040 8088 9864 8042 18080 18081 22 8020 8485 2888
 
 # Set entrypoint
 ENTRYPOINT ["/bin/bash", "-c", "/entrypoint.sh"]

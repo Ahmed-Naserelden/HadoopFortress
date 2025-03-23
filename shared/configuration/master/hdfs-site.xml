@@ -40,7 +40,7 @@
 
     <property>
       <name>dfs.ha.namenodes.mycluster</name>
-      <value>nn1,nn2, nn3</value>
+      <value>nn1,nn2,nn3</value>
     </property>
 
     <property>

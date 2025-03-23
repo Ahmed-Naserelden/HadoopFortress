@@ -3,9 +3,6 @@
 # Start SSH service
 sudo service ssh start
 
-sudo chown -R hduser:hadoop /usr/local/hadoop/logs
-# sudo chmow -R hduser:hadoop /usr/local/hadoop/logs
-
 # Start JournalNode daemon
 echo "Starting JournalNode daemon..."
 hdfs --daemon start journalnode
@@ -13,29 +10,26 @@ hdfs --daemon start journalnode
 # Wait for JournalNodes to initialize
 sleep 10
 
+# Ensure shared edits directory is initialized (Run only on master1)
+if [ "$(hostname)" == "master1" ] && [ ! -f /usr/local/hadoop/yarn_data/hdfs/journalnode/formatted ]; then
+    echo "Initializing shared edits directory..."
+    hdfs namenode -initializeSharedEdits
+    mkdir -p /usr/local/hadoop/yarn_data/hdfs/journalnode/mycluster
+    touch /usr/local/hadoop/yarn_data/hdfs/journalnode/formatted
+fi
+
+# Format NameNode only if not formatted (Only on master1)
+if [ "$(hostname)" == "master1" ] && [ ! -f /usr/local/hadoop/yarn_data/hdfs/namenode/formatted ]; then
+    echo "Formatting HDFS NameNode on master1..."
+    hdfs namenode -format
+    touch /usr/local/hadoop/yarn_data/hdfs/namenode/formatted
+fi
 
 # Sync latest config files
 cp /shared/configuration/all/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
 cp /shared/configuration/all/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
 
-
-# Check if JournalNode is formatted
-if [ ! -f /usr/local/hadoop/yarn_data/hdfs/journalnode/formatted ]; then
-    echo "Formatting JournalNode..."
-    rm -rf /tmp/hadoop/dfs/journalnode/*
-    hdfs journalnode -format
-    touch /usr/local/hadoop/yarn_data/hdfs/journalnode/formatted
-fi
-
-# Format NameNode if not formatted (Only on master1)
-if [ "$(hostname)" == "master1" ] && [ ! -f /usr/local/hadoop/yarn_data/hdfs/namenode/formatted ]; then
-    echo "Initializing shared edits..."
-    hdfs namenode -initializeSharedEdits
-    hdfs namenode -format
-    touch /usr/local/hadoop/yarn_data/hdfs/namenode/formatted
-fi
-
-# Bootstrap Standby NameNode
+# Ensure Standby NameNodes are initialized
 if [ "$(hostname)" != "master1" ] && [ ! -f /usr/local/hadoop/yarn_data/hdfs/namenode/formatted ]; then
     echo "Bootstrapping Standby NameNode on $(hostname)..."
     hdfs namenode -bootstrapStandby

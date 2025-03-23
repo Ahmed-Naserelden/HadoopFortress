@@ -5,3 +5,4 @@ prompt
 shared/hadoop-3.3.6.tar.gz
 shared/zo
 design/apache-zookeeper-3.8.4-bin.tar.gz
+shared/master*logs/
