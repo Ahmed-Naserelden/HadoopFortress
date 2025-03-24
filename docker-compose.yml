@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   master1:
-    image: an2071497/hadoopimg:1.11
+    image: an2071497/hadoopimg:1.13
     container_name: master1
 
     environment:
@@ -35,7 +35,7 @@ services:
     
 
   master2:
-    image: an2071497/hadoopimg:1.11
+    image: an2071497/hadoopimg:1.13
     container_name: master2
     environment:
       - isMaster=yes
@@ -65,7 +65,7 @@ services:
       # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
 
   master3:
-    image: an2071497/hadoopimg:1.11
+    image: an2071497/hadoopimg:1.13
     
     container_name: master3
     

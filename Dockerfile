@@ -28,7 +28,7 @@ RUN echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> /home/hduser/.profile 
     echo "YARN_HOME=/usr/local/hadoop" >> /home/hduser/.profile &&\
     echo "HADOOP_COMMON_LIB_NATIVE_DIR=/usr/local/hadoop/lib/native" >> /home/hduser/.profile &&\
     echo "HADOOP_OPTS="-Djava.library.path=/usr/local/hadoop/lib"" >> /home/hduser/.profile &&\
-    echo "PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin:/usr/local/hadoop/zookeeper/bin" >> /home/hduser/.profile
+    echo "PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin:/usr/local/zookeeper/bin" >> /home/hduser/.profile
 
 
 # Copy Hadoop archive and extract it
@@ -54,7 +54,7 @@ ENV HADOOP_HDFS_HOME=$HADOOP_HOME
 ENV YARN_HOME=$HADOOP_HOME
 ENV HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 ENV HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib"
-ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HADOOP_HOME/zookeeper/bin
+ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:usr/local/zookeeper/bin
 
 
 # Copy Hadoop configuration files
@@ -89,13 +89,21 @@ RUN  mkdir -p /usr/local/hadoop/logs && \
 #     mv /usr/local/hadoop/apache-zookeeper-3.8.4-bin /usr/local/hadoop/zookeeper && \
 #     chown -R hduser:hadoop /usr/local/hadoop/zookeeper && \
 #     chmod -R 755 /usr/local/hadoop/zookeeper
+# ----------------------------
 
-# RUN mkdir -p /var/lib/zookeeper && \
-#     chmod -R 755 /var/lib/zookeeper && \
-#     chown -R hduser:hadoop /var/lib/zookeeper
+COPY ./shared/apache-zookeeper-3.8.4-bin.tar.gz /usr/local/
+RUN tar -xvzf /usr/local/apache-zookeeper-3.8.4-bin.tar.gz -C /usr/local/ && \
+    mv /usr/local/apache-zookeeper-3.8.4-bin /usr/local/zookeeper && \
+    chown -R hduser:hadoop /usr/local/zookeeper && \
+    chmod -R 755 /usr/local/zookeeper
 
-# COPY ./shared/zookeeper/zoo.cfg /usr/local/hadoop/zookeeper/conf/zoo.cfg
+#---------------------------
 
+RUN mkdir -p /var/lib/zookeeper && \
+    chmod -R 755 /var/lib/zookeeper && \
+    chown -R hduser:hadoop /var/lib/zookeeper
+
+COPY ./shared/zookeeper/zoo.cfg /usr/local/zookeeper/conf/zoo.cfg
 
 
 

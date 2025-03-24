@@ -42,10 +42,39 @@ if [ "$(hostname)" != "master1" ] && [ ! -f /usr/local/hadoop/yarn_data/hdfs/nam
     touch /usr/local/hadoop/yarn_data/hdfs/namenode/formatted
 fi
 
+# if [ "$(hostname)" == "master1" ]; then
+#     echo "1" > /var/lib/zookeeper/myid
+# fi
+
+# if [ "$(hostname)" == "master2" ]; then
+#     echo "2" > /var/lib/zookeeper/myid
+# fi
+
+# if [ "$(hostname)" == "master3" ]; then
+#     echo "3" > /var/lib/zookeeper/myid
+# fi
+
+# # ---------------------
+# # **Format ZooKeeper Failover Controller (ZKFC)**
+# if [ "$(hostname)" == "master1" ]; then
+#     echo "Formatting ZKFC..."
+#     $HADOOP_HOME/bin/hdfs zkfc -formatZK
+# fi
+# # ---------------------
+
+# # ---------------------
+# # # Start Zookeeper
+echo "Starting Zookeeper..."
+zkServer.sh start
+$HADOOP_HOME/bin/hdfs --daemon start zkfc
+# # ---------------------
+
 # Start Hadoop services
 echo "Starting Hadoop services..."
 $HADOOP_HOME/sbin/start-dfs.sh
 $HADOOP_HOME/sbin/start-yarn.sh
+
+
 
 # Keep container running
 tail -f /dev/null

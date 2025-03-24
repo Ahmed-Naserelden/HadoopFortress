@@ -161,5 +161,21 @@ docker container run -d --name hadoop-cluster100 --hostname hadoop -p 8888:8888 
 
 ```bash
 docker container run -it --name hadoop-cluster100 --hostname hadoop -p 8888:8888 -p 9879:9870 -p 4040:4040 -p 8078:8088 -p 9864:9864 -p 8042:8042 -p 18180:18080 -p 18181:18081 -v ./shared:/shared -v ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh an2071497/hadoopimg:1.6 
+```
 
+
+```bash
+hdfs haadmin -getServiceState nn1
+hdfs haadmin -getServiceState nn2
+hdfs haadmin -getServiceState nn3
+
+hdfs haadmin -getAllServiceState
+
+hdfs haadmin -transitionToActive nn1 --forcemanual
+
+
+```
+
+```bash
+PATH="$PATH:/usr/local/zookeeper/bin"
 ```
