@@ -7,3 +7,7 @@ shared/zo
 design/apache-zookeeper-3.8.4-bin.tar.gz
 shared/master*logs/
 audit
+docker-compose.log
+1nn-2sb-entry.sh
+error.err
+lastnext.sh

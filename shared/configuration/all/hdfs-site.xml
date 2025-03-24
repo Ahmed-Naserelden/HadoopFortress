@@ -102,10 +102,15 @@
 
 <!-- ==================================================================================== -->
 
+    <!-- <property>
+      <name>dfs.ha.fencing.methods</name>
+       <value>/home/hduser/fence.sh</value> 
+      <value>sshfence</value>
+    </property> -->
+
     <property>
       <name>dfs.ha.fencing.methods</name>
-      <value>/home/hduser/fence.sh</value>
-      <value>sshfence</value>
+      <value>shell(/bin/true)</value>
     </property>
 
 
