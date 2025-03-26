@@ -3,7 +3,6 @@ shared/data/
 shared/.ssh/
 prompt
 shared/hadoop-3.3.6.tar.gz
-shared/zo
 shared/apache-zookeeper-3.8.4-bin.tar.gz
 shared/*er*_logs/
 audit
@@ -13,3 +12,4 @@ error.err
 lastnext.sh
 shared/configuration/recent_master/
 shared/*.*
+latentrypoint.sh
