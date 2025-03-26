@@ -16,13 +16,19 @@
 
 <!-- Put site-specific property overrides in this file. -->
 <configuration>
-    <property>
+    <!-- <property>
         <name>hadoop.tmp.dir</name>
         <value>/app/hadoop/tmp</value>
-    </property>
+    </property> -->
+
     <property>
-        <name>fs.default.name</name>
-        <value>hdfs://localhost:9000</value>
+      <name>fs.defaultFS</name>
+      <value>hdfs://mycluster</value>
     </property>
-    
+
+    <property>
+      <name>ha.zookeeper.quorum</name>
+      <value>master1:2181,master2:2181,master3:2181</value>
+    </property>
+
 </configuration>

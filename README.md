@@ -172,10 +172,25 @@ hdfs haadmin -getServiceState nn3
 hdfs haadmin -getAllServiceState
 
 hdfs haadmin -transitionToActive nn1 --forcemanual
-
-
 ```
 
 ```bash
 PATH="$PATH:/usr/local/zookeeper/bin"
+```
+
+```bash
+hdfs haadmin -getAllServiceState
+```
+
+
+```bash
+hdfs --daemon stop namenode
+```
+
+```bash
+yarn rmadmin -getAllServiceState
+```
+
+```bash
+yarn --daemon stop resourcemanager
 ```

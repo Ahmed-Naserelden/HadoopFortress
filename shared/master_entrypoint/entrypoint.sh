@@ -40,11 +40,11 @@ sleep 5
 echo "Starting ZKFC on $(hostname)..."
 $HADOOP_HOME/bin/hdfs --daemon start zkfc
 
-# Sync latest config files
-cp /shared/configuration/all/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
-cp /shared/configuration/all/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
-cp /shared/configuration/all/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
-cp /shared/configuration/all/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
+# Sync latest config files 
+cp /shared/configuration/master/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
+cp /shared/configuration/master/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
+cp /shared/configuration/master/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
+cp /shared/configuration/master/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
 
 # Check if JournalNode is formatted
 if [ ! -f /usr/local/hadoop/yarn_data/hdfs/journalnode/formatted ]; then
@@ -71,8 +71,10 @@ fi
 
 # Start Hadoop services
 echo "Starting Hadoop services..."
-$HADOOP_HOME/sbin/start-dfs.sh
-$HADOOP_HOME/sbin/start-yarn.sh
+# $HADOOP_HOME/sbin/start-dfs.sh
+hdfs --daemon start namenode
+# $HADOOP_HOME/sbin/start-yarn.sh
+yarn --daemon start resourcemanager
 
 # Keep container running
 tail -f /dev/null

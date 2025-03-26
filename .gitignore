@@ -5,9 +5,11 @@ prompt
 shared/hadoop-3.3.6.tar.gz
 shared/zo
 design/apache-zookeeper-3.8.4-bin.tar.gz
-shared/master*logs/
+shared/*er*_logs/
 audit
 docker-compose.log
 1nn-2sb-entry.sh
 error.err
 lastnext.sh
+shared/configuration/recent_master/
+shared/*.*

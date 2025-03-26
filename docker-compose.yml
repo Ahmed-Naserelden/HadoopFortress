@@ -30,7 +30,7 @@ services:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
       - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
-      - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
+      - ./shared/configuration/master:/usr/local/hadoop/etc/hadoop/
       - ./shared/master1_logs:/usr/local/hadoop/logs
     
 
@@ -96,6 +96,73 @@ services:
 
     networks:
       - cluster_net
+
+
+  worker1:
+    image: an2071497/hadoopimg:1.13
+    container_name: worker1
+    environment:
+      - isMaster=no
+
+    hostname: worker1
+    restart: always
+
+    ports:
+      - "8883:8888"
+      - "9882:9870"
+      - "4043:4040"
+      - "8081:8088"
+      - "9867:9864"
+      - "8045:8042"
+
+      - "18186:18080"
+      - "18187:18081"
+
+    volumes:
+      - ./shared:/shared
+      - ./shared/worker_entrypoint/entrypoint.sh:/entrypoint.sh
+      - ./shared/worker1_logs:/usr/local/hadoop/logs
+      # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
+
+    networks:
+      - cluster_net
+    depends_on:
+      - master1
+      - master2
+      - master3
+
+  worker2:
+    image: an2071497/hadoopimg:1.13
+    container_name: worker2
+    environment:
+      - isMaster=no
+
+    hostname: worker2
+    restart: always
+
+    ports:
+      - "8884:8888"
+      - "9883:9870"
+      - "4044:4040"
+      - "8082:8088"
+      - "9868:9864"
+      - "8046:8042"
+
+      - "18188:18080"
+      - "18189:18081"
+
+    volumes:
+      - ./shared:/shared
+      - ./shared/worker_entrypoint/entrypoint.sh:/entrypoint.sh
+      - ./shared/worker2_logs:/usr/local/hadoop/logs
+      # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
+
+    networks:
+      - cluster_net
+    depends_on:
+      - master1
+      - master2
+      - master3
 
 networks:
   cluster_net:

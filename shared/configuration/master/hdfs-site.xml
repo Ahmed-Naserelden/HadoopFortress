@@ -34,7 +34,7 @@
 <!-- ==================================================================================== -->
 
     <property>
-        <name>dfs.nameservice</name>
+        <name>dfs.nameservices</name>
         <value>mycluster</value>
     </property>
 
@@ -71,18 +71,34 @@
       <name>dfs.namenode.http-address.mycluster.nn3</name>
       <value>master3:9870</value>
     </property>
+<!-- ==================================================================================== -->
+
+    <property>
+    <name>dfs.namenode.heartbeat.recheck-interval</name>
+    <value>30000</value> <!-- 30 sec -->
+    
+    </property>
+
+    <property>
+        <name>dfs.heartbeat.interval</name>
+        <value>3</value> <!-- DataNodes send heartbeats every 3 sec -->
+    </property>
 
 <!-- ==================================================================================== -->
+
 
     <property>
       <name>dfs.namenode.shared.edits.dir</name>
       <value>qjournal://master1:8485;master2:8485;master3:8485/mycluster</value>
     </property>
 
+    
     <property>
       <name>dfs.journalnode.edits.dir</name>
       <value>/usr/local/hadoop/yarn_data/hdfs/journalnode</value> 
     </property>
+
+
 
 <!-- ==================================================================================== -->
 
@@ -100,15 +116,29 @@
 
 <!-- ==================================================================================== -->
 
+    <!-- <property>
+      <name>dfs.ha.fencing.methods</name>
+        <value>/home/hduser/fence.sh</value> 
+        <value>sshfence</value>
+    </property> -->
+
     <property>
       <name>dfs.ha.fencing.methods</name>
-      <value>sshfence,shell(/usr/local/hadoop/bin/fence.sh)</value>
+      <value>shell(/bin/true)</value>
     </property>
+
 
     <property>
       <name>dfs.ha.fencing.ssh.private-key-files</name>
       <value>/home/hduser/.ssh/id_rsa</value>
     </property>
+
+    <property>
+      <name>dfs.ha.fencing.ssh.connect-timeout</name>
+      <value>30000</value>
+    </property>
+
+
 
 <!-- ==================================================================================== -->
 
@@ -117,7 +147,6 @@
   <value>true</value>
 </property>
 
-<!-- ==================================================================================== -->
 
 
 
@@ -127,6 +156,16 @@
   <name>ha.zookeeper.quorum</name>
   <value>zookeeper:2181</value>
 </property> -->
+
+<property>
+    <name>ha.zookeeper.quorum</name>
+    <value>master1:2181,master2:2181,master3:2181</value>
+</property>
+
+<property>
+  <name>dfs.ha.automatic-failover.enabled</name>
+  <value>true</value>
+</property>
 
 </configuration>
 

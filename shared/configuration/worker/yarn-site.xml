@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <!--
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -13,16 +12,17 @@
   See the License for the specific language governing permissions and
   limitations under the License. See accompanying LICENSE file.
 -->
-
-<!-- Put site-specific property overrides in this file. -->
-
 <configuration>
+
+    <!-- NodeManager Work Directories -->
     <property>
-        <name>mapreduce.framework.name</name>
-        <value>yarn</value>
+        <name>yarn.nodemanager.local-dirs</name>
+        <value>/usr/local/hadoop/yarn_data/nodemanager</value>
     </property>
+
     <property>
-        <name>mapreduce.jobhistory.address</name>
-        <value>localhost:10020</value>
+        <name>yarn.nodemanager.log-dirs</name>
+        <value>/usr/local/hadoop/logs/nodemanager</value>
     </property>
+
 </configuration>

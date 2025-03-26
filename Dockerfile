@@ -84,11 +84,6 @@ RUN  mkdir -p /usr/local/hadoop/logs && \
 #     chmod -R 755 /tmp/hadoop/dfs/journalnode/mycluste && \
 #     chown -R hduser:hadoop /tmp/hadoop/dfs/journalnode/mycluste
 
-# COPY ./shared/apache-zookeeper-3.8.4-bin.tar.gz /usr/local/hadoop/
-# RUN tar -xvzf /usr/local/hadoop/apache-zookeeper-3.8.4-bin.tar.gz -C /usr/local/hadoop/ && \
-#     mv /usr/local/hadoop/apache-zookeeper-3.8.4-bin /usr/local/hadoop/zookeeper && \
-#     chown -R hduser:hadoop /usr/local/hadoop/zookeeper && \
-#     chmod -R 755 /usr/local/hadoop/zookeeper
 # ----------------------------
 
 COPY ./shared/apache-zookeeper-3.8.4-bin.tar.gz /usr/local/
