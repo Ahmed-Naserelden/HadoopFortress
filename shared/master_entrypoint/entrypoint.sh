@@ -1,56 +1,51 @@
 #!/bin/bash
 
 # Start SSH service
+echo "Starting SSH service..."
 sudo service ssh start
 
+# Ensure correct ownership of Hadoop logs
 sudo chown -R hduser:hadoop /usr/local/hadoop/logs
-# sudo chmow -R hduser:hadoop /usr/local/hadoop/logs
 
 # Start JournalNode daemon
 echo "Starting JournalNode daemon..."
 hdfs --daemon start journalnode
+sleep 5  # Give JournalNodes time to initialize
 
-# Wait for JournalNodes to initialize
-sleep 5
-
-echo "Setting Zookeeper ID..."
-# Set Zookeeper ID
+# Set Zookeeper ID based on hostname
 echo "Setting Zookeeper ID..."
 case "$(hostname)" in
-    "master1") echo "1" > /var/lib/zookeeper/myid ;;
-    "master2") echo "2" > /var/lib/zookeeper/myid ;;
-    "master3") echo "3" > /var/lib/zookeeper/myid ;;
+    "master1") echo "1" | sudo tee /var/lib/zookeeper/myid ;;
+    "master2") echo "2" | sudo tee /var/lib/zookeeper/myid ;;
+    "master3") echo "3" | sudo tee /var/lib/zookeeper/myid ;;
 esac
 
-# **Start Zookeeper First**
+# Start ZooKeeper
 echo "Starting ZooKeeper..."
 zkServer.sh start
+sleep 5  # Give ZooKeeper time to initialize
 
-sleep 5
-
-# **Format ZooKeeper Failover Controller (ZKFC) - Only on master1**
-if [ "$(hostname)" == "master1" ]; then
-    echo "Formatting ZKFC..."
-    $HADOOP_HOME/bin/hdfs zkfc -formatZK
-fi
-
-sleep 5
-
-# **Start ZKFC on all NameNodes**
-echo "Starting ZKFC on $(hostname)..."
-$HADOOP_HOME/bin/hdfs --daemon start zkfc
-
-# Sync latest config files 
+# Sync latest Hadoop configuration files
+echo "Syncing Hadoop configuration files..."
 cp /shared/configuration/master/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
 cp /shared/configuration/master/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
 cp /shared/configuration/master/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
 cp /shared/configuration/master/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
 
+# Format ZKFC only on master1
+if [ "$(hostname)" == "master1" ]; then
+    echo "Formatting ZKFC..."
+    $HADOOP_HOME/bin/hdfs zkfc -formatZK
+fi
+
+# Start ZKFC on all NameNodes
+echo "Starting ZKFC on $(hostname)..."
+$HADOOP_HOME/bin/hdfs --daemon start zkfc
+
 # Check if JournalNode is formatted
 if [ ! -f /usr/local/hadoop/yarn_data/hdfs/journalnode/formatted ]; then
     echo "Formatting JournalNode..."
     rm -rf /tmp/hadoop/dfs/journalnode/*
-    hdfs journalnode -format
     touch /usr/local/hadoop/yarn_data/hdfs/journalnode/formatted
 fi
 
@@ -58,11 +53,13 @@ fi
 if [ "$(hostname)" == "master1" ] && [ ! -f /usr/local/hadoop/yarn_data/hdfs/namenode/formatted ]; then
     echo "Initializing shared edits..."
     hdfs namenode -initializeSharedEdits
+
+    echo "Formatting NameNode..."
     hdfs namenode -format
     touch /usr/local/hadoop/yarn_data/hdfs/namenode/formatted
 fi
 
-# Bootstrap Standby NameNode
+# Bootstrap Standby NameNode (for master2 and master3)
 if [ "$(hostname)" != "master1" ] && [ ! -f /usr/local/hadoop/yarn_data/hdfs/namenode/formatted ]; then
     echo "Bootstrapping Standby NameNode on $(hostname)..."
     hdfs namenode -bootstrapStandby
@@ -71,9 +68,7 @@ fi
 
 # Start Hadoop services
 echo "Starting Hadoop services..."
-# $HADOOP_HOME/sbin/start-dfs.sh
 hdfs --daemon start namenode
-# $HADOOP_HOME/sbin/start-yarn.sh
 yarn --daemon start resourcemanager
 
 # Keep container running

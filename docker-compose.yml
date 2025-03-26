@@ -31,7 +31,7 @@ services:
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
       - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
       - ./shared/configuration/master:/usr/local/hadoop/etc/hadoop/
-      - ./shared/master1_logs:/usr/local/hadoop/logs
+      - ./shared/logs/masters/master1_logs:/usr/local/hadoop/logs
     
 
   master2:
@@ -61,7 +61,7 @@ services:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
       - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
-      - ./shared/master2_logs:/usr/local/hadoop/logs
+      - ./shared/logs/masters/master2_logs:/usr/local/hadoop/logs
       # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
 
   master3:
@@ -91,7 +91,7 @@ services:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
       - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
-      - ./shared/master3_logs:/usr/local/hadoop/logs
+      - ./shared/logs/masters/master3_logs:/usr/local/hadoop/logs
       # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
 
     networks:
@@ -121,7 +121,7 @@ services:
     volumes:
       - ./shared:/shared
       - ./shared/worker_entrypoint/entrypoint.sh:/entrypoint.sh
-      - ./shared/worker1_logs:/usr/local/hadoop/logs
+      - ./shared/logs/workers/worker1_logs:/usr/local/hadoop/logs
       # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
 
     networks:
@@ -154,7 +154,7 @@ services:
     volumes:
       - ./shared:/shared
       - ./shared/worker_entrypoint/entrypoint.sh:/entrypoint.sh
-      - ./shared/worker2_logs:/usr/local/hadoop/logs
+      - ./shared/logs/workers/worker2_logs:/usr/local/hadoop/logs
       # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
 
     networks:

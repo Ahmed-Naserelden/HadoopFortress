@@ -74,20 +74,6 @@
 <!-- ==================================================================================== -->
 
     <property>
-    <name>dfs.namenode.heartbeat.recheck-interval</name>
-    <value>30000</value> <!-- 30 sec -->
-    
-    </property>
-
-    <property>
-        <name>dfs.heartbeat.interval</name>
-        <value>3</value> <!-- DataNodes send heartbeats every 3 sec -->
-    </property>
-
-<!-- ==================================================================================== -->
-
-
-    <property>
       <name>dfs.namenode.shared.edits.dir</name>
       <value>qjournal://master1:8485;master2:8485;master3:8485/mycluster</value>
     </property>
@@ -118,8 +104,8 @@
 
     <!-- <property>
       <name>dfs.ha.fencing.methods</name>
-        <value>/home/hduser/fence.sh</value> 
-        <value>sshfence</value>
+       <value>/home/hduser/fence.sh</value> 
+      <value>sshfence</value>
     </property> -->
 
     <property>
@@ -168,4 +154,3 @@
 </property>
 
 </configuration>
-
