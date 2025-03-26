@@ -4,7 +4,7 @@ shared/.ssh/
 prompt
 shared/hadoop-3.3.6.tar.gz
 shared/zo
-design/apache-zookeeper-3.8.4-bin.tar.gz
+shared/apache-zookeeper-3.8.4-bin.tar.gz
 shared/*er*_logs/
 audit
 docker-compose.log
