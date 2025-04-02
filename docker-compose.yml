@@ -22,7 +22,6 @@ services:
     volumes:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
-      - ./shared/logs/masters/master1_logs:/usr/local/hadoop/logs
     
 
   master2:
@@ -45,7 +44,6 @@ services:
     volumes:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
-      - ./shared/logs/masters/master2_logs:/usr/local/hadoop/logs
 
   master3:
     image: an2071497/hadoopimg:1.13
@@ -66,7 +64,6 @@ services:
     volumes:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
-      - ./shared/logs/masters/master3_logs:/usr/local/hadoop/logs
 
     networks:
       - cluster_net
@@ -83,7 +80,6 @@ services:
     volumes:
       - ./shared:/shared
       - ./shared/worker_entrypoint/entrypoint.sh:/entrypoint.sh
-      - ./shared/logs/workers/worker1_logs:/usr/local/hadoop/logs
 
     networks:
       - cluster_net
