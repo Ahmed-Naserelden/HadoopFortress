@@ -1,0 +1,97 @@
+version: '3.7'
+
+services:
+  master1:
+    image: an2071497/hadoopimg:1.13
+    container_name: master1
+    environment:
+      - isMaster=yes
+    hostname: master1
+    restart: always
+
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]  
+    volumes:
+      - shared:/shared
+      - master_entrypoint:/entrypoint
+
+    entrypoint: ["/entrypoint/entrypoint.sh"]
+
+    ports:
+      - "9879:9870"
+      - "8078:8088"
+      - "8042:8042"
+
+  master2:
+    image: an2071497/hadoopimg:1.13
+    container_name: master2
+    environment:
+      - isMaster=yes
+    hostname: master2
+    restart: always
+
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+    volumes:
+      - shared:/shared
+      - master_entrypoint:/entrypoint
+    ports:
+      - "9880:9870"
+      - "8079:8088"
+      - "8043:8042"
+    entrypoint: ["/entrypoint/entrypoint.sh"]
+
+  master3:
+    image: an2071497/hadoopimg:1.13
+    container_name: master3
+    environment:
+      - isMaster=yes
+    hostname: master3
+    restart: always
+
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+    volumes:
+      - shared:/shared
+      - master_entrypoint:/entrypoint
+
+    entrypoint: ["/entrypoint/entrypoint.sh"]
+
+    
+    ports:
+      - "9881:9870"
+      - "8080:8088"
+      - "8044:8042"
+
+  worker:
+    image: an2071497/hadoopimg:1.13
+    environment:
+      - isMaster=no
+    restart: always
+
+    depends_on:
+      - master1
+      - master2
+      - master3
+    deploy:
+      replicas: 3  
+      placement:
+        constraints: [node.role != manager]
+    volumes:
+      - shared:/shared
+      - worker_entrypoint:/entrypoint
+    entrypoint: ["/entrypoint/entrypoint.sh"]
+
+volumes:
+  shared:
+    external: true
+  master_entrypoint:
+    external: true
+  worker_entrypoint:
+    external: true
