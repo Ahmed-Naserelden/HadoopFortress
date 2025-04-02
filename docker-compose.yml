@@ -10,7 +10,7 @@ services:
 
     hostname: master1
     restart: always
-
+    
     networks:
       - cluster_net
 
@@ -23,6 +23,14 @@ services:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
     
+    healthcheck:
+      test: ["CMD-SHELL", "jps | grep -E 'QuorumPeerMain|NameNode|DFSZKFailoverController|ResourceManager|JournalNode'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+    mem_limit: 3G
+    cpus: 1
 
   master2:
     image: an2071497/hadoopimg:1.13
@@ -44,6 +52,15 @@ services:
     volumes:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
+
+    healthcheck:
+      test: ["CMD-SHELL", "jps | grep -E 'QuorumPeerMain|NameNode|DFSZKFailoverController|ResourceManager|JournalNode'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+    mem_limit: 3G
+    cpus: 1
 
   master3:
     image: an2071497/hadoopimg:1.13
@@ -68,6 +85,13 @@ services:
     networks:
       - cluster_net
 
+    healthcheck:
+      test: ["CMD-SHELL", "jps | grep -E 'QuorumPeerMain|NameNode|DFSZKFailoverController|ResourceManager|JournalNode'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    mem_limit: 3G
+    cpus: 1
 
   worker:
     image: an2071497/hadoopimg:1.13
@@ -83,10 +107,23 @@ services:
 
     networks:
       - cluster_net
+
     depends_on:
-      - master1
-      - master2
-      - master3
+      master1:
+        condition: service_healthy
+      master2:
+        condition: service_healthy
+      master3:
+        condition: service_healthy
+
+    mem_limit: 4G
+    cpus: 3
+
+    healthcheck:
+      test: ["CMD-SHELL", "jps | grep -E 'DataNode|NodeManager'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   cluster_net:
