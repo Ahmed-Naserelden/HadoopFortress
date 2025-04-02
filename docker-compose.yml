@@ -10,29 +10,27 @@ services:
 
     hostname: master1
     restart: always
-
+    
     networks:
       - cluster_net
 
-    # entrypoint: ./entrypoint.sh
     ports:
-      - "8888:8888"
       - "9879:9870"
-      - "4040:4040"
       - "8078:8088"
-      - "9864:9864"
       - "8042:8042"
-
-      - "18180:18080"
-      - "18181:18081"
 
     volumes:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
-      - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
-      # - ./shared/configuration/master:/usr/local/hadoop/etc/hadoop/
-      - ./shared/logs/masters/master1_logs:/usr/local/hadoop/logs
     
+    healthcheck:
+      test: ["CMD-SHELL", "jps | grep -E 'QuorumPeerMain|NameNode|DFSZKFailoverController|ResourceManager|JournalNode'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+    mem_limit: 3G
+    cpus: 1
 
   master2:
     image: an2071497/hadoopimg:1.13
@@ -47,22 +45,22 @@ services:
       - cluster_net
 
     ports:
-      - "8881:8888"
       - "9880:9870"
-      - "4041:4040"
       - "8079:8088"
-      - "9865:9864"
       - "8043:8042"
-
-      - "18182:18080"
-      - "18183:18081"
 
     volumes:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
-      # - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
-      - ./shared/logs/masters/master2_logs:/usr/local/hadoop/logs
-      # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
+
+    healthcheck:
+      test: ["CMD-SHELL", "jps | grep -E 'QuorumPeerMain|NameNode|DFSZKFailoverController|ResourceManager|JournalNode'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+    mem_limit: 3G
+    cpus: 1
 
   master3:
     image: an2071497/hadoopimg:1.13
@@ -71,32 +69,29 @@ services:
     
     environment:
       - isMaster=yes
-    # entrypoint: ./entrypoint.sh
 
     hostname: master3
     restart: always
 
     ports:
-      - "8882:8888"
       - "9881:9870"
-      - "4042:4040"
       - "8080:8088"
-      - "9866:9864"
       - "8044:8042"
-
-      - "18184:18080"
-      - "18185:18081"
 
     volumes:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
-      - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
-      - ./shared/logs/masters/master3_logs:/usr/local/hadoop/logs
-      # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
 
     networks:
       - cluster_net
 
+    healthcheck:
+      test: ["CMD-SHELL", "jps | grep -E 'QuorumPeerMain|NameNode|DFSZKFailoverController|ResourceManager|JournalNode'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    mem_limit: 3G
+    cpus: 1
 
   worker:
     image: an2071497/hadoopimg:1.13
@@ -104,24 +99,32 @@ services:
     environment:
       - isMaster=no
 
-    hostname: worker
     restart: always
 
     volumes:
       - ./shared:/shared
       - ./shared/worker_entrypoint/entrypoint.sh:/entrypoint.sh
-      - ./shared/logs/workers/worker1_logs:/usr/local/hadoop/logs
-      # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
 
     networks:
       - cluster_net
+
     depends_on:
-      - master1
-      - master2
-      - master3
+      master1:
+        condition: service_healthy
+      master2:
+        condition: service_healthy
+      master3:
+        condition: service_healthy
+
+    mem_limit: 4G
+    cpus: 3
+
+    healthcheck:
+      test: ["CMD-SHELL", "jps | grep -E 'DataNode|NodeManager'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   cluster_net:
     driver: bridge
-
-

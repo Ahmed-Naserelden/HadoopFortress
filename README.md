@@ -203,3 +203,15 @@ hadoop distcp /a/* /
 ```bash
 hdfs dfsadmin -report 
 ```
+
+```bash
+docker container run -it --network hadoop-high-availability_cluster_net \
+-v ./shared:/shared \
+-v ./shared/worker_entrypoint/entrypoint.sh:/entrypoint.sh \
+-v ./shared/logs/workers/worker2_logs:/usr/local/hadoop/logs \
+an2071497/hadoopimg:1.13
+```
+
+```bash
+docker container run -it --network hadoop-high-availability_cluster_net -v ./shared:/shared -v ./shared/worker_entrypoint/entrypoint.sh:/entrypoint.sh -v ./shared/logs/workers/worker2_logs:/usr/local/hadoop/logs an2071497/hadoopimg:1.13
+```
