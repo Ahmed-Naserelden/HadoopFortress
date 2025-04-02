@@ -17,12 +17,12 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
-    <property>
+    <!-- <property>
         <name>mapreduce.framework.name</name>
         <value>yarn</value>
-    </property>
-    <property>
+    </property> -->
+    <!-- <property>
         <name>mapreduce.jobhistory.address</name>
         <value>localhost:10020</value>
-    </property>
+    </property> -->
 </configuration>
