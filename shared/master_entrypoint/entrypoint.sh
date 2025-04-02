@@ -38,9 +38,7 @@ if [ "$(hostname)" == "master1" ]; then
     $HADOOP_HOME/bin/hdfs zkfc -formatZK
 fi
 
-# Start ZKFC on all NameNodes
-echo "Starting ZKFC on $(hostname)..."
-$HADOOP_HOME/bin/hdfs --daemon start zkfc
+
 
 # Check if JournalNode is formatted
 if [ ! -f /usr/local/hadoop/yarn_data/hdfs/journalnode/formatted ]; then
@@ -65,6 +63,10 @@ if [ "$(hostname)" != "master1" ] && [ ! -f /usr/local/hadoop/yarn_data/hdfs/nam
     hdfs namenode -bootstrapStandby
     touch /usr/local/hadoop/yarn_data/hdfs/namenode/formatted
 fi
+
+# Start ZKFC on all NameNodes
+echo "Starting ZKFC on $(hostname)..."
+$HADOOP_HOME/bin/hdfs --daemon start zkfc
 
 # Start Hadoop services
 echo "Starting Hadoop services..."
