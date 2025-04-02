@@ -31,6 +31,8 @@ cp /shared/configuration/master/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.
 cp /shared/configuration/master/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
 cp /shared/configuration/master/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
 cp /shared/configuration/master/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
+cp /shared/configuration/master/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+
 
 # Format ZKFC only on master1
 if [ "$(hostname)" == "master1" ]; then

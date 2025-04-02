@@ -30,7 +30,7 @@ services:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
       - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
-      - ./shared/configuration/master:/usr/local/hadoop/etc/hadoop/
+      # - ./shared/configuration/master:/usr/local/hadoop/etc/hadoop/
       - ./shared/logs/masters/master1_logs:/usr/local/hadoop/logs
     
 
@@ -60,7 +60,7 @@ services:
     volumes:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
-      - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
+      # - ./shared/configuration/master/fence.sh:/home/hduser/fence.sh
       - ./shared/logs/masters/master2_logs:/usr/local/hadoop/logs
       # - ./shared/configuration/all:/usr/local/hadoop/etc/hadoop/
 

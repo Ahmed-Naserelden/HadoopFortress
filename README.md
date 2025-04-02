@@ -196,8 +196,7 @@ yarn --daemon stop resourcemanager
 ```
 
 ```bash
-hdfs dfs -mkdir /a
-hdfs dfs -put /shared/data/data.csv /a
+hdfs dfs -mkdir /a; hdfs dfs -put /shared/data/data.csv /a
 hadoop distcp /a/* /
 ```
 
