@@ -14,10 +14,9 @@ services:
       placement:
         constraints: [node.role == manager]  
     volumes:
-      - shared:/shared
-      - master_entrypoint:/entrypoint
+      - ./shared:/shared
+      - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
 
-    entrypoint: ["/entrypoint/entrypoint.sh"]
 
     ports:
       - "9879:9870"
@@ -37,13 +36,13 @@ services:
       placement:
         constraints: [node.role == manager]
     volumes:
-      - shared:/shared
-      - master_entrypoint:/entrypoint
+      - ./shared:/shared
+      - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
+
     ports:
       - "9880:9870"
       - "8079:8088"
       - "8043:8042"
-    entrypoint: ["/entrypoint/entrypoint.sh"]
 
   master3:
     image: an2071497/hadoopimg:1.13
@@ -58,10 +57,11 @@ services:
       placement:
         constraints: [node.role == manager]
     volumes:
-      - shared:/shared
-      - master_entrypoint:/entrypoint
+    volumes:
+      - ./shared:/shared
+      - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
 
-    entrypoint: ["/entrypoint/entrypoint.sh"]
+
 
     
     ports:
@@ -84,14 +84,6 @@ services:
       placement:
         constraints: [node.role != manager]
     volumes:
-      - shared:/shared
-      - worker_entrypoint:/entrypoint
-    entrypoint: ["/entrypoint/entrypoint.sh"]
+      - ./shared:/shared
+      - ./shared/worker_entrypoint/entrypoint.sh:/entrypoint.sh
 
-volumes:
-  shared:
-    external: true
-  master_entrypoint:
-    external: true
-  worker_entrypoint:
-    external: true
