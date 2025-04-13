@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   master1:
-    image: an2071497/hadoopimg:1.13
+    image: an2071497/hadoopimg:1.15
     container_name: master1
 
     environment:
@@ -33,7 +33,7 @@ services:
     cpus: 1
 
   master2:
-    image: an2071497/hadoopimg:1.13
+    image: an2071497/hadoopimg:1.15
     container_name: master2
     environment:
       - isMaster=yes
@@ -63,7 +63,7 @@ services:
     cpus: 1
 
   master3:
-    image: an2071497/hadoopimg:1.13
+    image: an2071497/hadoopimg:1.15
     
     container_name: master3
     
@@ -94,7 +94,7 @@ services:
     cpus: 1
 
   worker:
-    image: an2071497/hadoopimg:1.13
+    image: an2071497/hadoopimg:1.15
 
     environment:
       - isMaster=no
