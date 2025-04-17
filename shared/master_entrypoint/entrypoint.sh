@@ -32,7 +32,8 @@ cp /shared/configuration/master/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.
 cp /shared/configuration/master/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
 cp /shared/configuration/master/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
 cp /shared/configuration/master/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh
-
+cp /shared/hive/hive-site.xml $HIVE_HOME/conf/hive-site.xml
+cp /shared/postgresql-42.2.23.jar $HIVE_HOME/lib/
 
 # Format ZKFC only on master1
 if [ "$(hostname)" == "master1" ]; then
@@ -74,6 +75,26 @@ $HADOOP_HOME/bin/hdfs --daemon start zkfc
 echo "Starting Hadoop services..."
 hdfs --daemon start namenode
 yarn --daemon start resourcemanager
+
+# Start DataNode and NodeManager on master1
+if [ "$(hostname)" == "master1" ]; then
+
+    echo "Starting Hive services..."
+    # Start postgresql service
+    schematool -dbType postgres -initSchema
+    # Initialize Hive metastore
+    hive --service metastore &> /shared/metastore.log &
+    
+fi
+
+sleep 5
+
+# Start HiveServer2
+if [ "$(hostname)" != "master1" ]; then
+    # Start HiveServer2
+    hive --service hiveserver2 &> /shared/${HOSTNAME}_hiveserver2.log &
+fi
+
 
 # Keep container running
 tail -f /dev/null
