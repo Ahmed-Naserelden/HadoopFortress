@@ -15,7 +15,7 @@ ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:usr/local/zookeeper/bin
 # Install dependencies
 RUN apt update && \
     apt upgrade -y && \
-    apt install -y vim openjdk-8-jdk sudo openssh-server
+    apt install -y iputils-ping vim openjdk-8-jdk sudo openssh-server
 
 # Add Hadoop user and group
 RUN addgroup hadoop && \
@@ -80,11 +80,40 @@ RUN tar -xvzf /usr/local/apache-zookeeper-3.8.4-bin.tar.gz -C /usr/local/ && \
 
 COPY ./shared/zookeeper/zoo.cfg /usr/local/zookeeper/conf/zoo.cfg
 
+# ======================================================================
+# ======================================================================
+
+ENV HIVE_HOME=/usr/local/hive
+ENV PATH=$PATH:$HIVE_HOME/bin
+
+COPY ./shared/apache-hive-4.0.1-bin.tar.gz /usr/local/
+RUN tar -xzf /usr/local/apache-hive-4.0.1-bin.tar.gz -C /usr/local/ && \
+    mv /usr/local/apache-hive-4.0.1-bin /usr/local/hive && \
+    chown -R hduser:hadoop /usr/local/hive && \
+    rm /usr/local/apache-hive-4.0.1-bin.tar.gz
+
+RUN echo "HIVE_HOME=/usr/local/hive" >> /home/hduser/.profile && \
+    echo "PATH=$PATH:/usr/local/hive/bin" >> /home/hduser/.profile
+
+# --- --- -- -- - -- -- - -- - -- ------ - -- - -- -- - - -- - -
+
+COPY ./shared/apache-tez-0.10.2-bin.tar.gz /usr/local/
+RUN tar -xvzf /usr/local/apache-tez-0.10.2-bin.tar.gz -C /usr/local/ && \
+    mv /usr/local/apache-tez-0.10.2-bin /usr/local/tez && \
+    chown -R hduser:hadoop /usr/local/tez/ && \
+    rm /usr/local/apache-tez-0.10.2-bin.tar.gz
+
+ENV TEZ_HOME=/usr/local/tez
+
+
+# ======================================================================
+# ======================================================================
+
 # Switch to Hadoop user
 USER hduser
 
 # Expose ports for Hadoop services
-EXPOSE 9870 8088 8042
+EXPOSE 9870 8088
 
 # Set entrypoint
 ENTRYPOINT ["/bin/bash", "-c", "/entrypoint.sh"]
