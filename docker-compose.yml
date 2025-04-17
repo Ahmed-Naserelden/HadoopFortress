@@ -17,7 +17,6 @@ services:
     ports:
       - "9879:9870"
       - "8078:8088"
-      - "8042:8042"
 
     volumes:
       - ./shared:/shared
@@ -31,6 +30,9 @@ services:
 
     mem_limit: 3G
     cpus: 1
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   master2:
     image: an2071497/hadoopimg:1.15
@@ -47,7 +49,6 @@ services:
     ports:
       - "9880:9870"
       - "8079:8088"
-      - "8043:8042"
 
     volumes:
       - ./shared:/shared
@@ -61,6 +62,9 @@ services:
 
     mem_limit: 3G
     cpus: 1
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   master3:
     image: an2071497/hadoopimg:1.15
@@ -76,7 +80,6 @@ services:
     ports:
       - "9881:9870"
       - "8080:8088"
-      - "8044:8042"
 
     volumes:
       - ./shared:/shared
@@ -92,6 +95,9 @@ services:
       retries: 3
     mem_limit: 3G
     cpus: 1
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   worker:
     image: an2071497/hadoopimg:1.15
@@ -124,6 +130,46 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+  
+  postgres:
+    image: postgres:13
+    container_name: hive-metastore
+    hostname: metastore
+
+    environment:
+      POSTGRES_USER: hive_user
+      POSTGRES_PASSWORD: hive_password
+      POSTGRES_DB: hive
+    
+    ports:
+      - 5432:5432
+      - 5433:5433
+    volumes:
+      - metastoredb:/var/lib/postgresql/data
+    
+    networks:
+      - cluster_net 
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hive_user -d hive"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+  hive-lb:
+      image: haproxy:latest
+      container_name: hive-lb
+      ports:
+        - "10000:10000"
+      volumes:
+        - ./shared/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+      networks:
+        - cluster_net
+      depends_on:
+        - master2
+        - master3
+
+volumes:
+  metastoredb:
 
 networks:
   cluster_net:
