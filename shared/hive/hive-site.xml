@@ -16,79 +16,85 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-
 <configuration>
-  <!-- Hive Metastore Configuration -->
-  <property>
-    <name>javax.jdo.option.ConnectionURL</name>
-    <value>jdbc:postgresql://metastore:5432/hive</value>
-  </property>
 
-  <property>
-    <name>javax.jdo.option.ConnectionDriverName</name>
-    <value>org.postgresql.Driver</value>
-  </property>
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:postgresql://metastore:5432/hive</value>
+    </property>
 
-  <property>
-    <name>javax.jdo.option.ConnectionUserName</name>
-    <value>hive_user</value>
-  </property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>org.postgresql.Driver</value>
+    </property>
 
-  <property>
-    <name>javax.jdo.option.ConnectionPassword</name>
-    <value>hive_password</value>
-  </property>
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>hive_user</value>
+    </property>
 
-  <!-- HDFS Configuration for HA -->
-  <property>
-    <name>fs.defaultFS</name>
-    <value>hdfs://mycluster</value>
-  </property>
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>hive_password</value>
+    </property>
 
-  <property>
-    <name>hadoop.proxyuser.hduser.groups</name>
-    <value>*</value>
-  </property>
+    <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>/user/hive/warehouse</value>
+    </property>
 
-  <property>
-    <name>hadoop.proxyuser.hduser.hosts</name>
-    <value>*</value>
-  </property>
+    <property>
+        <name>hive.execution.engine</name>
+        <value>tez</value>
+    </property>
 
-  <!-- Hive Execution Engine (Tez or MR) -->
-  <property>
-    <name>hive.execution.engine</name>
-    <value>mr</value>  <!-- Or 'tez' if you're using Tez -->
-  </property>
+    <property>
+        <name>hive.tez.container.size</name>
+        <value>2048</value>
+    </property>
+    <property>
+        <name>tez.am.resource.memory.mb</name>
+        <value>2048</value>
+    </property>
 
-  <!-- <property>
-    <name>tez.lib.uris</name>
-    <value>hdfs:///apps/tez/</value>
-  </property> -->
+    <property>
+        <name>hive.tez.log.level</name>
+        <value>DEBUG</value>
+    </property>
 
-  <!-- Other optional Hive configurations can go here -->
-  <property>
-    <name>hive.metastore.warehouse.dir</name>
-    <value>/user/hive/warehouse</value>
-  </property>
-  <property>
-    <name>hive.exec.dynamic.partition.mode</name>
-    <value>nonstrict</value>
-  </property>
+    <property>
+        <name>hadoop.proxyuser.hduser.groups</name>
+        <value>*</value>
+    </property>
 
-  <property>
-    <name>hive.server2.enable.doAs</name>
-    <value>false</value>
-  </property>
+    <property>
+        <name>hadoop.proxyuser.hduser.hosts</name>
+        <value>*</value>
+    </property>
 
-  <property>
-    <name>hive.server2.authentication</name>
-    <value>NONE</value>  <!-- Disable authentication for testing -->
-  </property>
+    <property>
+        <name>hive.exec.dynamic.partition.mode</name>
+        <value>nonstrict</value>
+    </property>
 
-  <property>
-    <name>hive.server2.transport.mode</name>
-    <value>binary</value>
-  </property>
+    <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.server2.authentication</name>
+        <value>NONE</value>
+    </property>
+
+    <property>
+        <name>hive.server2.transport.mode</name>
+        <value>binary</value>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.bind.host</name>
+        <value>0.0.0.0</value>
+    </property>
 
 </configuration>

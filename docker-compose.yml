@@ -21,15 +21,16 @@ services:
     volumes:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
-    
+
+      
     healthcheck:
       test: ["CMD-SHELL", "jps | grep -E 'QuorumPeerMain|NameNode|DFSZKFailoverController|ResourceManager|JournalNode'"]
       interval: 30s
       timeout: 10s
       retries: 3
 
-    mem_limit: 3G
-    cpus: 1
+    # mem_limit: 3G
+    # cpus: 1
     depends_on:
       postgres:
         condition: service_healthy
@@ -60,8 +61,8 @@ services:
       timeout: 10s
       retries: 3
 
-    mem_limit: 3G
-    cpus: 1
+    # mem_limit: 3G
+    # cpus: 1
     depends_on:
       postgres:
         condition: service_healthy
@@ -93,8 +94,8 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    mem_limit: 3G
-    cpus: 1
+    # mem_limit: 3G
+    # cpus: 1
     depends_on:
       postgres:
         condition: service_healthy
@@ -122,8 +123,8 @@ services:
       master3:
         condition: service_healthy
 
-    mem_limit: 4G
-    cpus: 3
+    # mem_limit: 4G
+    # cpus: 3
 
     healthcheck:
       test: ["CMD-SHELL", "jps | grep -E 'DataNode|NodeManager'"]
@@ -155,18 +156,20 @@ services:
       interval: 10s
       timeout: 10s
       retries: 3
-  hive-lb:
-      image: haproxy:latest
-      container_name: hive-lb
-      ports:
-        - "10000:10000"
-      volumes:
-        - ./shared/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
-      networks:
-        - cluster_net
-      depends_on:
-        - master2
-        - master3
+  
+  # hive-lb:
+  #   image: haproxy:latest
+  #   container_name: hive-lb
+  #   ports:
+  #     - "10000:10000"
+  #   volumes:
+  #     - ./shared/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+  #   networks:
+  #     - cluster_net
+  #   depends_on:
+  #     - master2
+  #     - master3
+  #     - worker
 
 volumes:
   metastoredb:
@@ -174,3 +177,5 @@ volumes:
 networks:
   cluster_net:
     driver: bridge
+
+# pkill -9 docker-compose; docker volume rm hha_metastoredb; rm ./shared/*.log

@@ -10,7 +10,10 @@ ENV HADOOP_HDFS_HOME=$HADOOP_HOME
 ENV YARN_HOME=$HADOOP_HOME
 ENV HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 ENV HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib"
-ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:usr/local/zookeeper/bin
+ENV HIVE_HOME=/usr/local/hive
+ENV TEZ_HOME=/usr/local/tez
+ENV TEZ_CONF_DIR=$TEZ_HOME/conf
+ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:usr/local/zookeeper/bin:/usr/local/hive/bin:/usr/local/tez/bin
 
 # Install dependencies
 RUN apt update && \
@@ -28,17 +31,6 @@ RUN mkdir -p /home/hduser/.ssh && \
     cat /home/hduser/.ssh/id_rsa.pub >> /home/hduser/.ssh/authorized_keys && \
     chmod 600 /home/hduser/.ssh/authorized_keys && \
     chown -R hduser:hadoop /home/hduser/.ssh
-
-RUN echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> /home/hduser/.profile &&\
-    echo "HADOOP_HOME=/usr/local/hadoop" >> /home/hduser/.profile &&\
-    echo "HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop" >> /home/hduser/.profile &&\
-    echo "HADOOP_MAPRED_HOME=/usr/local/hadoop" >> /home/hduser/.profile &&\
-    echo "HADOOP_COMMON_HOME=/usr/local/hadoop" >> /home/hduser/.profile &&\
-    echo "HADOOP_HDFS_HOME=/usr/local/hadoop" >> /home/hduser/.profile &&\
-    echo "YARN_HOME=/usr/local/hadoop" >> /home/hduser/.profile &&\
-    echo "HADOOP_COMMON_LIB_NATIVE_DIR=/usr/local/hadoop/lib/native" >> /home/hduser/.profile &&\
-    echo "HADOOP_OPTS="-Djava.library.path=/usr/local/hadoop/lib"" >> /home/hduser/.profile &&\
-    echo "PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin:/usr/local/zookeeper/bin" >> /home/hduser/.profile
 
 # Copy Hadoop archive and extract it
 COPY ./shared/hadoop-3.3.6.tar.gz /usr/local/
@@ -83,8 +75,6 @@ COPY ./shared/zookeeper/zoo.cfg /usr/local/zookeeper/conf/zoo.cfg
 # ======================================================================
 # ======================================================================
 
-ENV HIVE_HOME=/usr/local/hive
-ENV PATH=$PATH:$HIVE_HOME/bin
 
 COPY ./shared/apache-hive-4.0.1-bin.tar.gz /usr/local/
 RUN tar -xzf /usr/local/apache-hive-4.0.1-bin.tar.gz -C /usr/local/ && \
@@ -92,22 +82,40 @@ RUN tar -xzf /usr/local/apache-hive-4.0.1-bin.tar.gz -C /usr/local/ && \
     chown -R hduser:hadoop /usr/local/hive && \
     rm /usr/local/apache-hive-4.0.1-bin.tar.gz
 
-RUN echo "HIVE_HOME=/usr/local/hive" >> /home/hduser/.profile && \
-    echo "PATH=$PATH:/usr/local/hive/bin" >> /home/hduser/.profile
-
 # --- --- -- -- - -- -- - -- - -- ------ - -- - -- -- - - -- - -
 
-COPY ./shared/apache-tez-0.10.2-bin.tar.gz /usr/local/
-RUN tar -xvzf /usr/local/apache-tez-0.10.2-bin.tar.gz -C /usr/local/ && \
-    mv /usr/local/apache-tez-0.10.2-bin /usr/local/tez && \
+COPY ./shared/apache-tez-0.10.4-bin.tar.gz /usr/local/
+RUN tar -xvzf /usr/local/apache-tez-0.10.4-bin.tar.gz -C /usr/local/ && \
+    mv /usr/local/apache-tez-0.10.4-bin /usr/local/tez && \
     chown -R hduser:hadoop /usr/local/tez/ && \
-    rm /usr/local/apache-tez-0.10.2-bin.tar.gz
-
-ENV TEZ_HOME=/usr/local/tez
-
+    rm /usr/local/apache-tez-0.10.4-bin.tar.gz
 
 # ======================================================================
 # ======================================================================
+
+RUN echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> /home/hduser/.bashrc &&\
+    echo "export HADOOP_HOME=/usr/local/hadoop" >> /home/hduser/.profile &&\
+    echo "export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop" >> /home/hduser/.bashrc &&\
+    echo "export HADOOP_MAPRED_HOME=/usr/local/hadoop" >> /home/hduser/.bashrc &&\
+    echo "export HADOOP_COMMON_HOME=/usr/local/hadoop" >> /home/hduser/.bashrc &&\
+    echo "export HADOOP_HDFS_HOME=/usr/local/hadoop" >> /home/hduser/.bashrc &&\
+    echo "export YARN_HOME=/usr/local/hadoop" >> /home/hduser/.bashrc &&\
+    echo "export HADOOP_COMMON_LIB_NATIVE_DIR=/usr/local/hadoop/lib/native" >> /home/hduser/.bashrc &&\
+    echo "export HADOOP_OPTS="-Djava.library.path=/usr/local/hadoop/lib"" >> /home/hduser/.bashrc &&\
+    echo "export HIVE_HOME=/usr/local/hive" >> /home/hduser/.bashrc &&\
+    echo "export TEZ_HOME=/usr/local/tez" >> /home/hduser/.bashrc &&\
+    echo "export TEZ_CONF_DIR=/usr/local/tez/conf" >> /home/hduser/.bashrc &&\
+    echo "export TEZ_JARS=/path/to/tez/lib/*" >>  /home/hduser/.bashrc && \
+    echo "export HIVE_AUX_JARS_PATH=$TEZ_JARS" >>  /home/hduser/.bashrc && \
+    echo "export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$TEZ_CONF_DIR:$(find $TEZ_HOME -name '*.jar' | paste -sd ':' ):/usr/local/tez/conf:/usr/local/tez/tez-mapreduce-0.10.4.jar" >> /home/hduser/.bashrc &&\
+    # echo "export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/local/tez/conf:/usr/local/tez/tez-mapreduce-0.10.4.jar" >> /home/hduser/.bashrc &&\
+
+
+    # echo "export HADOOP_CLASSPATH=$TEZ_HOME/*:$TEZ_HOME/lib/*:$HADOOP_CLASSPATH" >> /home/hduser/.profile &&\
+    # echo "export TEZ_JARS=$(find $TEZ_HOME -name '*.jar' | tr '\n' ':')" >>  /home/hduser/.profile &&\
+    # echo "export HADOOP_CLASSPATH=${TEZ_CONF_DIR}:${TEZ_JARS}:${HADOOP_CLASSPATH}" >>  /home/hduser/.profile &&\
+    echo "export PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin:/usr/local/zookeeper/bin:/usr/local/hive/bin:/usr/local/tez/bin" >> /home/hduser/.profile
+# ENV HIVE_AUX_JARS_PATH=$TEZ_HOME
 
 # Switch to Hadoop user
 USER hduser
@@ -117,3 +125,6 @@ EXPOSE 9870 8088
 
 # Set entrypoint
 ENTRYPOINT ["/bin/bash", "-c", "/entrypoint.sh"]
+
+# docker build -t an2071497/hadoopimg:1.15 .
+

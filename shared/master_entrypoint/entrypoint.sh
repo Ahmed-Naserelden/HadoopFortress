@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source ~/.bashrc
 # Start SSH service
 echo "Starting SSH service..."
 sudo service ssh start
@@ -34,6 +35,8 @@ cp /shared/configuration/master/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-s
 cp /shared/configuration/master/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 cp /shared/hive/hive-site.xml $HIVE_HOME/conf/hive-site.xml
 cp /shared/postgresql-42.2.23.jar $HIVE_HOME/lib/
+cp /shared/tez/tez-site.xml $TEZ_HOME/conf/tez-site.xml
+cp $HADOOP_HOME/share/hadoop/common/lib/guava-27.0-jre.jar $HIVE_HOME/lib
 
 # Format ZKFC only on master1
 if [ "$(hostname)" == "master1" ]; then
@@ -76,24 +79,43 @@ echo "Starting Hadoop services..."
 hdfs --daemon start namenode
 yarn --daemon start resourcemanager
 
-# Start DataNode and NodeManager on master1
-if [ "$(hostname)" == "master1" ]; then
 
-    echo "Starting Hive services..."
-    # Start postgresql service
-    schematool -dbType postgres -initSchema
-    # Initialize Hive metastore
-    hive --service metastore &> /shared/metastore.log &
-    
+if [ "$(hostname)" == "master1" ]; then
+    sleep 20
+    # Start HiveServer2
+    echo "Creating Tez directory in HDFS..."
+    hdfs dfs -mkdir -p /apps/tez;
+
+    echo "Uploading Tez tez.tar.gz to HDFS..."
+    hdfs dfs -put $TEZ_HOME/share/tez.tar.gz /apps/tez/
+
+    echo "Setting permissions for Tez directory..."
+    hdfs dfs -chown -R hduser:hadoop /apps/tez
+    hdfs dfs -chmod -R 755 /apps
+
+    # rm -rf $TEZ_HOME/metastore_db/
+    echo "Uploading Tez jar files to HDFS Completed..."
 fi
 
 sleep 5
 
-# Start HiveServer2
-if [ "$(hostname)" != "master1" ]; then
+# start HiveServer2
+if [ "$(hostname)" == "master1" ]; then
+    echo "Starting Hive services..."
+    # Start postgresql service
+    schematool -dbType postgres -initSchema
+    sleep 10
+    # Initialize Hive metastore
+    hive --service metastore &> /shared/${HOSTNAME}_metastore.log &
+fi
+
+# start HiveServer2
+if [ "$(hostname)" == "master2" ]; then
+    sleep 20
     # Start HiveServer2
     hive --service hiveserver2 &> /shared/${HOSTNAME}_hiveserver2.log &
 fi
+
 
 
 # Keep container running
