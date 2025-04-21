@@ -21,7 +21,6 @@ services:
     volumes:
       - ./shared:/shared
       - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
-
       
     healthcheck:
       test: ["CMD-SHELL", "jps | grep -E 'QuorumPeerMain|NameNode|DFSZKFailoverController|ResourceManager|JournalNode'"]
@@ -66,6 +65,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+    
 
   master3:
     image: an2071497/hadoopimg:1.15
@@ -132,6 +133,42 @@ services:
       timeout: 10s
       retries: 3
   
+
+  hiveserver:
+    image: an2071497/hadoopimg:1.15
+    hostname: hiveserver
+    volumes:
+      - ./shared:/shared
+      - ./shared/hive/server/entrypoint.sh:/entrypoint.sh
+    depends_on:
+      hivemetastore:
+        condition: service_healthy
+
+        
+    networks:
+      - cluster_net
+
+  hivemetastore:
+    image: an2071497/hadoopimg:1.15
+    hostname: hive_metastore
+    
+    volumes:
+      - ./shared:/shared
+      - ./shared/hive/metastore/entrypoint.sh:/entrypoint.sh
+    
+    depends_on:
+      worker:
+        condition: service_healthy
+    networks:
+      - cluster_net
+
+    healthcheck:
+      test: ["CMD-SHELL", "jps | grep -E 'RunJar'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+
   postgres:
     image: postgres:13
     container_name: hive-metastore

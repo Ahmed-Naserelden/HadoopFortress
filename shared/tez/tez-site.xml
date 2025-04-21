@@ -10,10 +10,10 @@
         <value>hdfs:///apps/tez/tez.tar.gz</value>
         
     </property> 
-    <!-- <property>
+    <property>
         <name>tez.use.cluster.hadoop-libs</name>
         <value>true</value>
-    </property> -->
+    </property>
     <!-- In hive-site.xml -->
     <property>
         <name>hive.tez.container.size</name>

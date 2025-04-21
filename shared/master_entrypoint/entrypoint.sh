@@ -1,6 +1,5 @@
 #!/bin/bash
 
-source ~/.bashrc
 # Start SSH service
 echo "Starting SSH service..."
 sudo service ssh start
@@ -44,8 +43,6 @@ if [ "$(hostname)" == "master1" ]; then
     $HADOOP_HOME/bin/hdfs zkfc -formatZK
 fi
 
-
-
 # Check if JournalNode is formatted
 if [ ! -f /usr/local/hadoop/yarn_data/hdfs/journalnode/formatted ]; then
     echo "Formatting JournalNode..."
@@ -78,45 +75,6 @@ $HADOOP_HOME/bin/hdfs --daemon start zkfc
 echo "Starting Hadoop services..."
 hdfs --daemon start namenode
 yarn --daemon start resourcemanager
-
-
-if [ "$(hostname)" == "master1" ]; then
-    sleep 20
-    # Start HiveServer2
-    echo "Creating Tez directory in HDFS..."
-    hdfs dfs -mkdir -p /apps/tez;
-
-    echo "Uploading Tez tez.tar.gz to HDFS..."
-    hdfs dfs -put $TEZ_HOME/share/tez.tar.gz /apps/tez/
-
-    echo "Setting permissions for Tez directory..."
-    hdfs dfs -chown -R hduser:hadoop /apps/tez
-    hdfs dfs -chmod -R 755 /apps
-
-    # rm -rf $TEZ_HOME/metastore_db/
-    echo "Uploading Tez jar files to HDFS Completed..."
-fi
-
-sleep 5
-
-# start HiveServer2
-if [ "$(hostname)" == "master1" ]; then
-    echo "Starting Hive services..."
-    # Start postgresql service
-    schematool -dbType postgres -initSchema
-    sleep 10
-    # Initialize Hive metastore
-    hive --service metastore &> /shared/${HOSTNAME}_metastore.log &
-fi
-
-# start HiveServer2
-if [ "$(hostname)" == "master2" ]; then
-    sleep 20
-    # Start HiveServer2
-    hive --service hiveserver2 &> /shared/${HOSTNAME}_hiveserver2.log &
-fi
-
-
 
 # Keep container running
 tail -f /dev/null

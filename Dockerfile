@@ -105,17 +105,12 @@ RUN echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> /home/hduser/.b
     echo "export HIVE_HOME=/usr/local/hive" >> /home/hduser/.bashrc &&\
     echo "export TEZ_HOME=/usr/local/tez" >> /home/hduser/.bashrc &&\
     echo "export TEZ_CONF_DIR=/usr/local/tez/conf" >> /home/hduser/.bashrc &&\
-    echo "export TEZ_JARS=/path/to/tez/lib/*" >>  /home/hduser/.bashrc && \
-    echo "export HIVE_AUX_JARS_PATH=$TEZ_JARS" >>  /home/hduser/.bashrc && \
-    echo "export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$TEZ_CONF_DIR:$(find $TEZ_HOME -name '*.jar' | paste -sd ':' ):/usr/local/tez/conf:/usr/local/tez/tez-mapreduce-0.10.4.jar" >> /home/hduser/.bashrc &&\
-    # echo "export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/local/tez/conf:/usr/local/tez/tez-mapreduce-0.10.4.jar" >> /home/hduser/.bashrc &&\
+    echo "export TEZ_JARS=/usr/local/tez/lib/*" >>  /home/hduser/.bashrc && \
+    echo "export HIVE_AUX_JARS_PATH=/usr/local/tez/lib/*" >>  /home/hduser/.bashrc && \
+    echo "export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/usr/local/tez/conf:$(find /usr/local/tez -name '*.jar' | paste -sd ':' ):/usr/local/tez/conf:/usr/local/tez/tez-mapreduce-0.10.4.jar" >> /home/hduser/.bashrc &&\
+    echo "export PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin:/usr/local/zookeeper/bin:/usr/local/hive/bin:/usr/local/tez/bin" >> /home/hduser/.bashrc
 
-
-    # echo "export HADOOP_CLASSPATH=$TEZ_HOME/*:$TEZ_HOME/lib/*:$HADOOP_CLASSPATH" >> /home/hduser/.profile &&\
-    # echo "export TEZ_JARS=$(find $TEZ_HOME -name '*.jar' | tr '\n' ':')" >>  /home/hduser/.profile &&\
-    # echo "export HADOOP_CLASSPATH=${TEZ_CONF_DIR}:${TEZ_JARS}:${HADOOP_CLASSPATH}" >>  /home/hduser/.profile &&\
-    echo "export PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin:/usr/local/zookeeper/bin:/usr/local/hive/bin:/usr/local/tez/bin" >> /home/hduser/.profile
-# ENV HIVE_AUX_JARS_PATH=$TEZ_HOME
+    # ENV HIVE_AUX_JARS_PATH=$TEZ_HOME
 
 # Switch to Hadoop user
 USER hduser
