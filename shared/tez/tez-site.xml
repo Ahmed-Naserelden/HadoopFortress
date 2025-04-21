@@ -1,0 +1,27 @@
+
+<configuration>
+    <!-- <property>
+        <name>tez.lib.uris</name>
+        <value>hdfs:///apps/tez</value>
+    </property> -->
+
+    <property>
+        <name>tez.lib.uris</name>
+        <value>hdfs:///apps/tez/tez.tar.gz</value>
+        
+    </property> 
+    <!-- <property>
+        <name>tez.use.cluster.hadoop-libs</name>
+        <value>true</value>
+    </property> -->
+    <!-- In hive-site.xml -->
+    <property>
+        <name>hive.tez.container.size</name>
+        <value>2048</value>
+    </property>
+    <property>
+        <name>hive.tez.java.opts</name>
+        <value>-Xmx1638m</value>  <!-- 80% of container size -->
+    </property>
+    
+</configuration>
