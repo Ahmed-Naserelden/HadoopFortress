@@ -134,22 +134,36 @@ services:
       retries: 3
   
 
-  hiveserver:
-    image: an2071497/hadoopimg:1.15
-    hostname: hiveserver
+  hiveserver1:
+    image: an2071497/hiveimg:1.15
+    hostname: hiveserver1
     volumes:
       - ./shared:/shared
       - ./shared/hive/server/entrypoint.sh:/entrypoint.sh
     depends_on:
       hivemetastore:
         condition: service_healthy
+    environment:
+      - role=hiveserver        
+    networks:
+      - cluster_net
 
-        
+  hiveserver2:
+    image: an2071497/hiveimg:1.15
+    hostname: hiveserver2
+    volumes:
+      - ./shared:/shared
+      - ./shared/hive/server/entrypoint.sh:/entrypoint.sh
+    depends_on:
+      hivemetastore:
+        condition: service_healthy
+    environment:
+      - role=hiveserver
     networks:
       - cluster_net
 
   hivemetastore:
-    image: an2071497/hadoopimg:1.15
+    image: an2071497/hiveimg:1.15
     hostname: hive_metastore
     
     volumes:
@@ -194,19 +208,19 @@ services:
       timeout: 10s
       retries: 3
   
-  # hive-lb:
-  #   image: haproxy:latest
-  #   container_name: hive-lb
-  #   ports:
-  #     - "10000:10000"
-  #   volumes:
-  #     - ./shared/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
-  #   networks:
-  #     - cluster_net
-  #   depends_on:
-  #     - master2
-  #     - master3
-  #     - worker
+  hive-lb:
+    image: haproxy:latest
+    container_name: hive-lb
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./shared/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    networks:
+      - cluster_net
+    depends_on:
+      - hiveserver1
+      - hiveserver2
+
 
 volumes:
   metastoredb:
