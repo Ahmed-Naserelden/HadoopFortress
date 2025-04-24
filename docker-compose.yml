@@ -4,87 +4,61 @@ services:
   master1:
     image: an2071497/hadoopimg:1.13
     container_name: master1
-
-    environment:
-      - isMaster=yes
-
     hostname: master1
+    environment:
+      - ROLE=master
     restart: always
-    
     networks:
       - cluster_net
-
     ports:
       - "9879:9870"
       - "8078:8088"
-      - "8042:8042"
-
     volumes:
       - ./shared:/shared
-      - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
-    
     healthcheck:
       test: ["CMD-SHELL", "jps | grep -E 'QuorumPeerMain|NameNode|DFSZKFailoverController|ResourceManager|JournalNode'"]
       interval: 30s
       timeout: 10s
       retries: 3
-
     mem_limit: 3G
     cpus: 1
 
   master2:
     image: an2071497/hadoopimg:1.13
     container_name: master2
-    environment:
-      - isMaster=yes
-
     hostname: master2
+    environment:
+      - ROLE=master
     restart: always
-    
     networks:
       - cluster_net
-
     ports:
       - "9880:9870"
       - "8079:8088"
-      - "8043:8042"
-
     volumes:
       - ./shared:/shared
-      - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
-
     healthcheck:
       test: ["CMD-SHELL", "jps | grep -E 'QuorumPeerMain|NameNode|DFSZKFailoverController|ResourceManager|JournalNode'"]
       interval: 30s
       timeout: 10s
       retries: 3
-
     mem_limit: 3G
     cpus: 1
 
   master3:
     image: an2071497/hadoopimg:1.13
-    
     container_name: master3
-    
-    environment:
-      - isMaster=yes
-
     hostname: master3
+    environment:
+      - ROLE=master
     restart: always
-
+    networks:
+      - cluster_net
     ports:
       - "9881:9870"
       - "8080:8088"
-      - "8044:8042"
-
     volumes:
       - ./shared:/shared
-      - ./shared/master_entrypoint/entrypoint.sh:/entrypoint.sh
-
-    networks:
-      - cluster_net
-
     healthcheck:
       test: ["CMD-SHELL", "jps | grep -E 'QuorumPeerMain|NameNode|DFSZKFailoverController|ResourceManager|JournalNode'"]
       interval: 30s
@@ -95,19 +69,13 @@ services:
 
   worker:
     image: an2071497/hadoopimg:1.13
-
     environment:
-      - isMaster=no
-
+      - ROLE=worker
     restart: always
-
-    volumes:
-      - ./shared:/shared
-      - ./shared/worker_entrypoint/entrypoint.sh:/entrypoint.sh
-
     networks:
       - cluster_net
-
+    volumes:
+      - ./shared:/shared
     depends_on:
       master1:
         condition: service_healthy
@@ -115,16 +83,15 @@ services:
         condition: service_healthy
       master3:
         condition: service_healthy
-
-    mem_limit: 4G
-    cpus: 3
-
     healthcheck:
       test: ["CMD-SHELL", "jps | grep -E 'DataNode|NodeManager'"]
       interval: 30s
       timeout: 10s
       retries: 3
+    mem_limit: 4G
+    cpus: 3
 
 networks:
   cluster_net:
     driver: bridge
+

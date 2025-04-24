@@ -22,10 +22,17 @@
         <name>dfs.replication</name>
         <value>1</value>
     </property>
+    
     <property>
         <name>dfs.namenode.name.dir</name>
         <value>file:/usr/local/hadoop/yarn_data/hdfs/namenode</value>
     </property>
+
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/usr/local/hadoop/data/datanode</value>
+    </property>
+
     <property>
         <name>dfs.datanode.data.dir</name>
         <value>file:/usr/local/hadoop/yarn_data/hdfs/datanode</value>
@@ -47,10 +54,12 @@
       <name>dfs.namenode.rpc-address.mycluster.nn1</name>
       <value>master1:8020</value>
     </property>
+    
     <property>
       <name>dfs.namenode.rpc-address.mycluster.nn2</name>
       <value>master2:8020</value>
     </property>
+
     <property>
       <name>dfs.namenode.rpc-address.mycluster.nn3</name>
       <value>master3:8020</value>
@@ -58,19 +67,21 @@
 
 <!-- ==================================================================================== -->
 
-
     <property>
       <name>dfs.namenode.http-address.mycluster.nn1</name>
       <value>master1:9870</value>
     </property>
+    
     <property>
       <name>dfs.namenode.http-address.mycluster.nn2</name>
       <value>master2:9870</value>
     </property>
+    
     <property>
       <name>dfs.namenode.http-address.mycluster.nn3</name>
       <value>master3:9870</value>
     </property>
+
 <!-- ==================================================================================== -->
 
     <property>
@@ -100,19 +111,10 @@
       <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
     </property>
 
-<!-- ==================================================================================== -->
-
-    <!-- <property>
-      <name>dfs.ha.fencing.methods</name>
-       <value>/home/hduser/fence.sh</value> 
-      <value>sshfence</value>
-    </property> -->
-
     <property>
       <name>dfs.ha.fencing.methods</name>
       <value>shell(/bin/true)</value>
     </property>
-
 
     <property>
       <name>dfs.ha.fencing.ssh.private-key-files</name>
@@ -124,33 +126,22 @@
       <value>30000</value>
     </property>
 
+  <property>
+    <name>dfs.ha.nn.not-become-active-in-safemode</name>
+    <value>true</value>
+  </property>
 
+  <property>
+      <name>ha.zookeeper.quorum</name>
+      <value>master1:2181,master2:2181,master3:2181</value>
+  </property>
 
-<!-- ==================================================================================== -->
-
-<property>
-  <name>dfs.ha.nn.not-become-active-in-safemode</name>
-  <value>true</value>
-</property>
-
-
-
-
-<!-- ==================================================================================== -->
-
-<!-- <property>
-  <name>ha.zookeeper.quorum</name>
-  <value>zookeeper:2181</value>
-</property> -->
-
-<property>
-    <name>ha.zookeeper.quorum</name>
-    <value>master1:2181,master2:2181,master3:2181</value>
-</property>
-
-<property>
-  <name>dfs.ha.automatic-failover.enabled</name>
-  <value>true</value>
-</property>
+  <property>
+    <name>dfs.ha.automatic-failover.enabled</name>
+    <value>true</value>
+  </property>
 
 </configuration>
+
+
+
