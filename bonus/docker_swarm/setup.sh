@@ -2,8 +2,11 @@
 
 # virsh list --all
 
-docker swarm init --advertise-addr 192.168.122.1:2377 --listen-addr 192.168.122.1:2377
+# docker swarm init --advertise-addr 192.168.122.1:2377 --listen-addr 192.168.122.1:2377
+docker swarm init --advertise-addr 10.145.0.181:2377 --listen-addr 10.145.0.181:2377
 
+docker warm join-token worker
+docker swarm join-token manager
 
 # biruni@boma🦉[Hadoop-High-Availability]🚀 docker swarm init --advertise-addr 192.168.122.1:2377 --listen-addr 192.168.122.1:2377
 # Swarm initialized: current node (glxmexbweqv3ux2og10uhi9f9) is now a manager.

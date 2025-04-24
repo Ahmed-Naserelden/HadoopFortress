@@ -73,7 +73,7 @@ services:
     image: an2071497/hadoopimg:1.13
     environment:
       - isMaster=no
-    restart: always
+    # restart: always
 
     depends_on:
       - master1
@@ -82,7 +82,7 @@ services:
     deploy:
       replicas: 3  
       placement:
-        constraints: [node.role != manager]
+        constraints: [node.role == manager]
     volumes:
       - shared:/shared
       - worker_entrypoint:/entrypoint
