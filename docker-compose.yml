@@ -91,7 +91,81 @@ services:
     mem_limit: 4G
     cpus: 3
 
+  hiveserver1:
+    image: an2071497/hiveimg:1.13
+    hostname: hiveserver1
+    environment:
+      - role=hiveserver
+    networks:
+      - cluster_net
+    depends_on:
+      hivemetastore:
+        condition: service_healthy
+    volumes:
+      - ./hive/server/entrypoint.sh:/entrypoint.sh
+      - ./shared:/shared
+      - ./tmp:/home/hduser/tmp
+    ports:
+        - "10000:10000"
+        - "10001:10001"
+  hivemetastore:
+    image: an2071497/hiveimg:1.13
+    hostname: hive_metastore    
+    networks:
+      - cluster_net
+    depends_on:
+      worker:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "jps | grep -E 'RunJar'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - ./hive/metastore/entrypoint.sh:/entrypoint.sh
+      - ./shared:/shared
+
+  # hive-lb:
+    # image: haproxy:latest
+    # container_name: hive-lb
+    # ports:
+    #   - "10000:10000"
+    # volumes:
+    #   - ./shared/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    # networks:
+    #   - cluster_net
+    # depends_on:
+    #   - hiveserver1
+    #   - hiveserver2
+
+  postgres:
+    image: postgres:13
+    container_name: hive-metastore
+    hostname: metastore
+
+    environment:
+      POSTGRES_USER: hive_user
+      POSTGRES_PASSWORD: hive_password
+      POSTGRES_DB: hive
+    
+    ports:
+      - 5432:5432
+      - 5433:5433
+    volumes:
+      - metastoredb:/var/lib/postgresql/data
+    
+    networks:
+      - cluster_net 
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hive_user -d hive"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
 networks:
   cluster_net:
     driver: bridge
 
+volumes:
+  metastoredb:

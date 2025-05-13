@@ -1,0 +1,23 @@
+
+<configuration>
+
+    <property>
+        <name>tez.lib.uris</name>
+        <value>hdfs:///apps/tez/tez.tar.gz</value>
+        
+    </property> 
+    <property>
+        <name>tez.use.cluster.hadoop-libs</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>hive.tez.container.size</name>
+        <value>2048</value>
+    </property>
+    <property>
+        <name>hive.tez.java.opts</name>
+        <value>-Xmx1638m</value> 
+    </property>
+    
+</configuration>
