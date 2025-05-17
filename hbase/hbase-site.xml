@@ -1,0 +1,33 @@
+<configuration>
+  
+  <property>
+    <name>hbase.rootdir</name>
+    <value>hdfs://mycluster/hbase</value>
+  </property>
+
+  <property>
+    <name>hbase.cluster.distributed</name>
+    <value>true</value>
+  </property>
+  
+  <property>
+    <name>hbase.zookeeper.quorum</name>
+    <value>master1,master2,master3</value>
+  </property>
+
+  <property>
+    <name>hbase.zookeeper.property.clientPort</name>
+    <value>2181</value>
+  </property>
+
+  <property>
+    <name>hbase.wal.provider</name>
+    <value>filesystem</value>
+  </property>
+
+  <property>
+    <name>hbase.replication</name>
+    <value>true</value>
+  </property>
+
+</configuration>

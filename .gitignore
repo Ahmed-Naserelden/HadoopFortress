@@ -19,3 +19,4 @@ shared/configuration/.hdfs-site.xml
 shared/configuration/.mapred-site.xml
 shared/configuration/.yarn-site.xml
 shared/logs/
+*.gz
