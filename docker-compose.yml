@@ -103,6 +103,9 @@ services:
       - ./hbase/hbase-site.xml:/usr/local/hbase/conf/hbase-site.xml
     networks:
       - cluster_net
+    ports:
+      - "16000:16000"
+      - "16010:16010"
 
   hb-master2:
     image: an2071497/hbase:13
@@ -116,6 +119,9 @@ services:
       - cluster_net
     depends_on:
       - worker
+    ports:
+      - "16001:16000"
+      - "16011:16010"
 
   hb-region-servers1:
     image: an2071497/hbase:13
@@ -149,3 +155,4 @@ networks:
   cluster_net:
     driver: bridge
 
+volumes:
