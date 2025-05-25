@@ -6,11 +6,12 @@ ENV PATH=/usr/local/hbase/bin:$PATH
 
 USER root
 
-COPY hbase-2.4.9-bin.tar.gz /usr/local/
+RUN apt update && sudo apt install -y libsnappy-dev
 
-RUN tar -xvzf /usr/local/hbase-2.4.9-bin.tar.gz -C /usr/local && \
+RUN curl -L https://archive.apache.org/dist/hbase/2.4.9/hbase-2.4.9-bin.tar.gz -o /tmp/hbase-2.4.9-bin.tar.gz && \
+    tar -xvzf /tmp/hbase-2.4.9-bin.tar.gz -C /usr/local && \
     mv /usr/local/hbase-2.4.9 /usr/local/hbase && \
-    rm /usr/local/hbase-2.4.9-bin.tar.gz && \
+    rm /tmp/hbase-2.4.9-bin.tar.gz && \
     chown -R hduser:hadoop /usr/local/hbase
 
 USER hduser

@@ -3,31 +3,49 @@
   <property>
     <name>hbase.rootdir</name>
     <value>hdfs://mycluster/hbase</value>
+    <description>Specifies the directory in HDFS where HBase stores its data, including tables and metadata.</description>
   </property>
 
   <property>
     <name>hbase.cluster.distributed</name>
     <value>true</value>
+    <description>Enables distributed mode for HBase, allowing it to run across multiple nodes for scalability and fault tolerance.</description>
   </property>
   
   <property>
-    <name>hbase.zookeeper.quorum</name>
-    <value>master1,master2,master3</value>
+    <name>hbase.zookeeper.property.dataDir</name>
+    <value>/usr/local/zookeeper/data</value>
+    <description>Defines the local filesystem directory where ZooKeeper stores its snapshot and transactional log data.</description>
   </property>
 
   <property>
+    <name>hbase.zookeeper.quorum</name>
+    <value>master1,master2,master3</value>
+    <description>Lists the hostnames of the ZooKeeper ensemble servers that HBase uses for coordination and state management.</description>
+  </property>
+  
+  <property>
     <name>hbase.zookeeper.property.clientPort</name>
     <value>2181</value>
+    <description>Sets the port number that ZooKeeper uses to listen for client connections.</description>
   </property>
 
   <property>
     <name>hbase.wal.provider</name>
     <value>filesystem</value>
+    <description>Specifies the provider for the Write-Ahead Log (WAL), using the filesystem for storing transaction logs.</description>
   </property>
 
   <property>
     <name>hbase.replication</name>
     <value>true</value>
+    <description>Enables HBase replication, allowing data to be replicated across clusters for high availability or disaster recovery.</description>
+  </property>
+
+  <property>
+    <name>hbase.hregion.majorcompaction</name>
+    <value>604800000</value>
+    <description>Sets the interval (in milliseconds) for major compactions of HBase regions, configured to 7 days to avoid compaction storms.</description>
   </property>
 
 </configuration>
