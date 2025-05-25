@@ -162,6 +162,65 @@ services:
       interval: 10s
       timeout: 10s
       retries: 3
+  hb-master1:
+    image: an2071497/hbase:13
+    hostname: hb-master1
+    environment:
+      - HBASE_ROLE=master
+    depends_on:
+      - worker
+    volumes:
+      - ./hbase/entrypoint.sh:/entrypoint.sh
+      - ./hbase/hbase-site.xml:/usr/local/hbase/conf/hbase-site.xml
+    networks:
+      - cluster_net
+    ports:
+      - "16000:16000"
+      - "16010:16010"
+
+  hb-master2:
+    image: an2071497/hbase:13
+    hostname: hb-master2
+    environment:
+      - HBASE_ROLE=master
+    volumes:
+      - ./hbase/entrypoint.sh:/entrypoint.sh
+      - ./hbase/hbase-site.xml:/usr/local/hbase/conf/hbase-site.xml
+    networks:
+      - cluster_net
+    depends_on:
+      - worker
+    ports:
+      - "16001:16000"
+      - "16011:16010"
+
+  hb-region-servers1:
+    image: an2071497/hbase:13
+    hostname: hb-region-servers1
+    environment:
+      - HBASE_ROLE=regionserver
+    depends_on:
+      - hb-master1
+      - hb-master2
+    volumes:
+      - ./hbase/entrypoint.sh:/entrypoint.sh
+      - ./hbase/hbase-site.xml:/usr/local/hbase/conf/hbase-site.xml
+    networks:
+      - cluster_net
+
+  hb-region-servers2:
+    image: an2071497/hbase:13
+    hostname: hb-region-servers2
+    environment:
+      - HBASE_ROLE=regionserver
+    depends_on:
+      - hb-master1
+      - hb-master2
+    volumes:
+      - ./hbase/entrypoint.sh:/entrypoint.sh
+      - ./hbase/hbase-site.xml:/usr/local/hbase/conf/hbase-site.xml
+    networks:
+      - cluster_net
 
 networks:
   cluster_net:

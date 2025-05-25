@@ -20,3 +20,4 @@ shared/configuration/.mapred-site.xml
 shared/configuration/.yarn-site.xml
 shared/logs/
 tmp/
+*.gz
