@@ -1,40 +1,110 @@
-# HadoopFortress: HBase High Availability Cluster on Docker
 
-This project is an extension of my previous Hadoop High Availability repository, now enhanced with a fully configured **HBase cluster** featuring complete high availability capabilities.
+# 🏰 HadoopFortress
 
-A production-ready, fully containerized **HBase cluster** with **High Availability** running on Hadoop:
+> **Build Your Own Fortress of Big Data**  
+> A fully Dockerized Big Data ecosystem with Hadoop (HDFS & YARN), Hive, and HBase, all configured for High Availability.
 
-- **HBase HA** with active/standby masters and multiple region servers
-- HDFS NameNode HA with Quorum Journal Manager (from previous project)
-- YARN ResourceManager HA (from previous project)
-- ZooKeeper ensemble for coordination
-
-This setup is designed for resilience, scalability, and easy testing in a local or cloud environment.
-
-## Features
-
-- **HDFS HA** with automatic failover
-- **YARN RM HA** for resource scheduling redundancy
-- **HBase Master HA** with ZooKeeper-managed failover
-- Multiple **HBase RegionServers**
-- Centralized **ZooKeeper ensemble**
-- Web UIs exposed for easy monitoring
-- Health checks and restart policies for stability
+![Docker](https://img.shields.io/badge/docker-ready-blue?logo=docker)
+![License](https://img.shields.io/github/license/Ahmed-Naserelden/HadoopFortress)
+![Stars](https://img.shields.io/github/stars/Ahmed-Naserelden/HadoopFortress?style=social)
+![Forks](https://img.shields.io/github/forks/Ahmed-Naserelden/HadoopFortress?style=social)
 
 ---
 
-## Architecture Overview
+## 📌 Overview
+
+**HadoopFortress** is an end-to-end, containerized **Big Data Ecosystem**, designed to simulate production-grade environments on a local machine or private cloud using **Docker Compose**.
+
+This project integrates:
+- 🧱 **HDFS (High Availability)** – 3-node cluster with active-standby NameNodes
+- 🧠 **YARN (High Availability)** – 3-node ResourceManager cluster with failover support
+- 🗂️ **Shared Edits via JournalNodes** – ensures metadata consistency with Quorum Journal Manager
+- 🐝 **Hive (High Availability)** – SQL-based data warehousing and querying engine
+- 🐘 **HBase (High Availability)** – scalable, distributed NoSQL columnar database
+- 🦓 **ZooKeeper** – service coordination and leader election framework
+- ❤️‍🩹 **Health Monitoring** – integrated service health checks for critical components
+
+---
+
+## 🌐 Ecosystem Architecture
 
 ![hbase_cluster](./design/hbasecluster.png)
 
-- 3 Hadoop Master Nodes (NameNode, ResourceManager, JournalNode, ZooKeeper)
-- 2 HBase Master Nodes
-- Multiple Worker Nodes (DataNode, NodeManager, HBase RegionServer)
-- Shared volumes for configs and data persistence
+```
+                        ┌─────────────────────┐
+                        │    Client/Users     │
+                        └────────┬────────────┘
+                                 │
+                 ┌───────────────▼────────────────┐
+                 │         Hive (SQL on Hadoop)   │
+                 └───────────────┬────────────────┘
+                                 │
+      ┌────────────┐      ┌──────▼──────┐       ┌────────────┐
+      │   HBase     ◄─────►   HDFS     ◄───────►    YARN     │
+      └─────┬───────┘      └────────────┘       └────┬───────┘
+            │                                        │
+    ┌───────▼────────┐                      ┌───────▼────────┐
+    │ ZooKeeper      │                      │  JournalNodes  │
+    └────────────────┘                      └────────────────┘
+```
+### Hive Architecture
+```
+                 ┌────────────────────────┐
+                 │   Hive Clients (JDBC)  │
+                 └────────────┬───────────┘
+                              │
+                      ┌───────▼────────┐
+                      │  HiveServer2   │
+                      └───────┬────────┘
+                              │
+                      ┌───────▼────────┐
+                      │ Hive Metastore │
+                      └───────┬────────┘
+                              │
+                    ┌────────▼─────────┐
+                    │     Apache Tez   │
+                    └────────┬─────────┘
+                             │
+                    ┌────────▼────────┐
+                    │      YARN       │
+                    └─────────────────┘
+
+```
 
 ---
 
-## Web Interfaces
+## 🚀 Features
+
+✅ Full **Big Data Ecosystem** (Hadoop, HBase, Hive)  
+✅ **High Availability** for NameNode using ZooKeeper & JournalNodes  
+✅ **Docker-Compose Powered** – Fast setup, teardown, and portability  
+✅ Pre-configured **networking, ports, and volumes**  
+✅ Ideal for **learning**, **prototyping**, and **testing** data pipelines  
+
+---
+
+## 🛠️ Quick Start
+
+### 1️⃣ Prerequisites
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+
+### 2️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/Ahmed-Naserelden/HadoopFortress.git
+cd HadoopFortress
+```
+
+### 3️⃣ Spin Up the Cluster
+
+```bash
+docker-compose up -d
+```
+
+---
+
+## 🔍 Accessing Services
 
 #### NameNode
 
@@ -52,6 +122,7 @@ This setup is designed for resilience, scalability, and easy testing in a local 
 | Master2    | [localhost:8079](http://localhost:8079) |
 | Master3    | [localhost:8080](http://localhost:8080) |
 
+
 #### RHBase Master
 
 | Component            | URL                    |
@@ -59,70 +130,76 @@ This setup is designed for resilience, scalability, and easy testing in a local 
 | HBase Master 1 UI     | http://localhost:16010 |
 | HBase Master 2 UI     | http://localhost:16011 |
 
----
 
-## Configuration Highlights
-
-- **HBase HA** configured via `hbase-site.xml` to use ZooKeeper for master failover.
-- RegionServers register with active HBase Master automatically.
-- Hadoop configs (`core-site.xml`, `hdfs-site.xml`, `yarn-site.xml`) set for HA mode.
-- `docker-compose.yml` defines all containers with appropriate roles, ports, and dependencies.
+| Component       | URL                          |
+|----------------|------------------------------|
+| HiveServer2     | JDBC: `jdbc:hive2://localhost:10000` |
 
 ---
 
-## Getting Started
-
-### Prerequisites
-- Docker & Docker Compose installed
-- Sufficient memory and CPU (recommended 8+ GB RAM)
-
-### Launch Cluster
+## 📂 Folder Structure
 
 ```bash
-docker-compose up -d
+HadoopFortress/
+├── docker-compose.yml       # Main Docker stack
+├── hadoop-config/           # Core Hadoop configs
+├── hive/                    # Hive scripts and configs
+├── hbase/                   # HBase configurations
+├── zookeeper/               # ZooKeeper ensemble configs
+├── Dockerfile               # Custom Hadoop base image
+└── README.md
 ```
 
-### Verify HBase Status
-
-Enter HBase shell on master container:
-
-```bash
-docker exec -it hb-master1 hbase shell
-```
-
-Run:
-
-```bash
-status 'detailed'
-```
-You should see both active and standby masters, plus region servers online.
-
-
-### Testing HBase HA
-
-1. Create a test table:
-```bash
-create 'test', 'cf'
-put 'test', 'row1', 'cf:col1', 'value1'
-scan 'test'
-```
 ---
 
-### Simulate failover:
+## 🧪 Test the Ecosystem
 
-- Stop active HBase master container (hb-master1).
-- Observe standby master (hb-master2) automatically takes over.
-- Run status 'detailed' again to confirm.
+### 🔹 HDFS Test
 
-###  Resources
+```bash
+docker exec -it <namenode-container> bash
+hdfs dfs -mkdir /test
+hdfs dfs -ls /
+```
 
-- [Apache HBase HA Guide](https://hbase.apache.org/book.html#_high_availability)
-- [HDFS High Availability](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html)
-- [YARN ResourceManager HA](https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/ResourceManagerHA.html)
-- [ZooKeeper Documentation](https://zookeeper.apache.org/doc/current/)
+### 🔹 Hive Test
 
+```bash
+docker exec -it <hive-container> bash
+beeline -u jdbc:hive2://localhost:10000
+CREATE DATABASE demo;
+SHOW DATABASES;
+```
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+### 🔹 HBase Test
 
+```bash
+docker exec -it <hbase-container> bash
+hbase shell
+create 'users', 'info'
+put 'users', '1', 'info:name', 'Alice'
+scan 'users'
+```
 
+---
+
+## 📚 Learn More
+
+- [Apache Hadoop](https://hadoop.apache.org/)
+- [Apache Hive](https://hive.apache.org/)
+- [Apache HBase](https://hbase.apache.org/)
+- [ZooKeeper](https://zookeeper.apache.org/)
+
+---
+
+## 🤝 Contributing
+
+Got an idea to improve this stack?  
+Feel free to fork the project, create a branch, and submit a pull request.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.  
+See the [LICENSE](LICENSE) file for details.
